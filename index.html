@@ -2668,42 +2668,7 @@ function renderStaffManagement() {
           ['1','Go to <strong>supabase.com</strong> → click <strong>Start your project</strong> → sign up free with GitHub or email'],
           ['2','Click <strong>New project</strong> → name it <strong>biomedical-grenada</strong> → choose a strong database password → select nearest region → click <strong>Create new project</strong> (takes ~2 minutes)'],
           ['3','Once ready, go to <strong>Project Settings → API</strong> → copy your <strong>Project URL</strong> and <strong>anon public key</strong> → paste them above'],
-          ['4','Go to <strong>SQL Editor</strong> → click <strong>New query</strong> → paste and run this SQL to create your tables:<br><code style="background:var(--surface);padding:8px 12px;border-radius:6px;font-size:10px;display:block;margin-top:6px;white-space:pre-wrap">-- Requests table
-create table bm_requests (
-  id text primary key,
-  equip text, dept text, description text,
-  date text, status text default 'new',
-  priority text default 'medium',
-  tech text, nature text, freq text,
-  next_pm text, work_performed text,
-  parts_used text, completed_date text,
-  supervisor_name text, validation_date text,
-  service_type text, requester text,
-  fault_desc text, manufacturer text,
-  model text, serial text, asset text,
-  location text, last_service text,
-  is_emergency boolean default false,
-  assignment_log text, signatures text,
-  created_at timestamptz default now()
-);
-
--- Staff table
-create table bm_staff (
-  id text primary key,
-  name text not null, role text,
-  email text, initials text,
-  active boolean default true
-);
-
--- Enable real-time
-alter publication supabase_realtime add table bm_requests;
-alter publication supabase_realtime add table bm_staff;
-
--- Allow public access (app uses anon key)
-alter table bm_requests enable row level security;
-alter table bm_staff enable row level security;
-create policy "allow all" on bm_requests for all using (true) with check (true);
-create policy "allow all" on bm_staff for all using (true) with check (true);</code>'],
+                    ['4','Go to <strong>SQL Editor</strong> in your Supabase project → click <strong>New query</strong> → paste the SQL from the setup file provided and click <strong>Run</strong>. You should see: Success. No rows returned.'],
           ['5','Back in the app: paste your <strong>Project URL</strong> and <strong>Anon Key</strong> above → tick <strong>Enable Supabase</strong> → click <strong>Save</strong>'],
           ['6','Click <strong>Test connection</strong> to verify → then click <strong>Migrate local data to cloud</strong> to move any existing requests to Supabase'],
           ['7','Done! All devices now share the same live database. Real-time updates happen automatically.'],
