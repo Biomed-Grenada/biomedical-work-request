@@ -193,7 +193,6 @@
   .toast.show { transform: translateY(0); opacity: 1; }
   .toast.success { background: var(--green); }
 
-
   /* ── ASSIGNMENT ── */
   .assign-bar { background:var(--amber-bg); border:1px solid #F0C060; border-radius:8px; padding:10px 14px; display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
   .assign-bar.unassigned { background:#FFF8E6; border-color:#F0C060; }
@@ -284,7 +283,7 @@
     .main { padding: 14px 12px 32px; }
   }
 </style>
-  <!-- PWA Meta Tags -->
+  
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -294,7 +293,7 @@
   <meta name="msapplication-TileColor" content="#003366">
   <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj48cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgcng9IjM2IiBmaWxsPSIjMDAzMzY2Ii8+PHJlY3QgeD0iODQiIHk9IjMyIiB3aWR0aD0iMjQiIGhlaWdodD0iMTI4IiByeD0iOCIgZmlsbD0id2hpdGUiLz48cmVjdCB4PSIzMiIgeT0iODQiIHdpZHRoPSIxMjgiIGhlaWdodD0iMjQiIHJ4PSI4IiBmaWxsPSJ3aGl0ZSIvPjxjaXJjbGUgY3g9Ijk2IiBjeT0iOTYiIHI9IjgwIiBmaWxsPSJub25lIiBzdHJva2U9IiMwMEFFRUYiIHN0cm9rZS13aWR0aD0iOCIgb3BhY2l0eT0iMC43Ii8+PC9zdmc+">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj48cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgcng9IjM2IiBmaWxsPSIjMDAzMzY2Ii8+PHJlY3QgeD0iODQiIHk9IjMyIiB3aWR0aD0iMjQiIGhlaWdodD0iMTI4IiByeD0iOCIgZmlsbD0id2hpdGUiLz48cmVjdCB4PSIzMiIgeT0iODQiIHdpZHRoPSIxMjgiIGhlaWdodD0iMjQiIHJ4PSI4IiBmaWxsPSJ3aGl0ZSIvPjxjaXJjbGUgY3g9Ijk2IiBjeT0iOTYiIHI9IjgwIiBmaWxsPSJub25lIiBzdHJva2U9IiMwMEFFRUYiIHN0cm9rZS13aWR0aD0iOCIgb3BhY2l0eT0iMC43Ii8+PC9zdmc+">
-  <!-- Inline PWA Manifest -->
+  
   <script>
     const _manifest = {
       name: "Biomedical Work Request System",
@@ -318,15 +317,15 @@
     document.head.appendChild(_mLink);
   <\/script>
 
-  <!-- EmailJS SDK -->
+  
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
-<!-- TOAST -->
+
 <div class="toast" id="toast"></div>
 
-<!-- LOGIN PAGE -->
+
 <div id="login-page" class="login-page">
   <div class="login-card" id="login-card">
     <div class="login-logo">
@@ -358,7 +357,7 @@
     <div class="login-forgot">Forgot your PIN? Contact your supervisor</div>
   </div>
 
-  <!-- NAME PICKER (shown after tech PIN) -->
+  
   <div id="name-picker-card" style="display:none;background:#fff;border-radius:16px;padding:36px 32px;width:100%;max-width:380px;box-shadow:0 8px 40px rgba(0,0,0,0.25);margin-top:0">
     <div style="text-align:center;margin-bottom:20px">
       <div style="width:52px;height:52px;background:var(--blue);border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:24px;color:#fff;margin-bottom:12px">
@@ -374,7 +373,7 @@
   </div>
 </div>
 
-<!-- APP SHELL -->
+
 <div id="app" style="display:none">
   <div class="topbar">
     <div class="topbar-brand">
@@ -408,7 +407,7 @@
   <div class="main" id="app-main"></div>
 </div>
 
-<!-- INSTALL BANNER -->
+
 <div id="install-banner" style="display:none;position:fixed;bottom:90px;left:12px;right:12px;background:var(--navy);color:#fff;border-radius:12px;padding:12px 16px;z-index:350;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,0.3);max-width:500px;margin:0 auto">
   <div style="width:40px;height:40px;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
     <svg viewBox="0 0 40 40" width="40" height="40"><rect width="40" height="40" rx="8" fill="#003366"/><rect x="17" y="6" width="6" height="28" rx="3" fill="white"/><rect x="6" y="17" width="28" height="6" rx="3" fill="white"/></svg>
@@ -421,7 +420,7 @@
   <button onclick="dismissInstallBanner()" style="background:transparent;border:none;color:rgba(255,255,255,0.6);cursor:pointer;font-size:18px;padding:0;line-height:1">✕</button>
 </div>
 
-<!-- NOTIFICATION PANEL -->
+
 <div class="notif-panel" id="notif-panel">
   <div class="notif-header">
     <span><i class="ti ti-bell" style="margin-right:6px"></i>Notifications</span>
@@ -432,7 +431,7 @@
   </div>
 </div>
 
-<!-- EMERGENCY MODAL -->
+
 <div class="emergency-modal" id="emergency-modal" onclick="closeEmergencyModal(event)">
   <div class="emergency-card" onclick="event.stopPropagation()">
     <div class="emergency-card-hdr">
@@ -444,7 +443,7 @@
     </div>
     <div class="emergency-card-body">
 
-      <!-- VOICE RECORDER PANEL -->
+      
       <div id="em-voice-panel">
         <div style="text-align:center;padding:8px 0 14px">
           <div style="font-size:12px;color:var(--text-muted);margin-bottom:14px;line-height:1.6">
@@ -452,7 +451,7 @@
             We will transcribe it automatically into the alert form.
           </div>
 
-          <!-- Waveform visualiser -->
+          
           <div id="em-waveform" style="height:48px;background:#FFF0F0;border-radius:8px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:3px;overflow:hidden;padding:0 10px">
             <span style="font-size:12px;color:#C0392B;font-weight:500" id="em-wave-idle"><i class="ti ti-microphone" style="font-size:18px;vertical-align:middle;margin-right:6px"></i>Ready to record</span>
             <div id="em-bars" style="display:none;align-items:flex-end;gap:3px;height:40px">
@@ -460,10 +459,10 @@
             </div>
           </div>
 
-          <!-- Timer -->
+          
           <div id="em-timer" style="font-size:28px;font-weight:700;color:#C0392B;font-variant-numeric:tabular-nums;margin-bottom:16px;display:none">0:00</div>
 
-          <!-- Record controls -->
+          
           <div style="display:flex;gap:10px;justify-content:center;margin-bottom:10px">
             <button id="em-record-btn" onclick="toggleRecording()" style="background:#C0392B;color:#fff;border:none;border-radius:50%;width:64px;height:64px;font-size:26px;cursor:pointer;box-shadow:0 4px 16px rgba(192,57,43,0.4);display:flex;align-items:center;justify-content:center;transition:all 0.2s">
               <i class="ti ti-microphone" id="em-mic-icon"></i>
@@ -475,7 +474,7 @@
 
           <div id="em-rec-status" style="font-size:12px;color:var(--text-muted);margin-bottom:6px">Tap the microphone to start recording</div>
 
-          <!-- Transcription result -->
+          
           <div id="em-transcript-box" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:10px;text-align:left">
             <div style="font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px"><i class="ti ti-file-text" style="margin-right:4px"></i>Transcription</div>
             <div id="em-transcript-text" style="font-size:13px;line-height:1.6;color:var(--text)"></div>
@@ -522,7 +521,7 @@
   </div>
 </div>
 
-<!-- EMERGENCY FAB -->
+
 <div class="emergency-fab" id="emergency-fab" style="display:none">
   <button class="emergency-btn" onclick="openEmergencyModal()" title="Emergency Alert">
     <i class="ti ti-urgent"></i>
@@ -690,7 +689,7 @@ function doLogin() {
     launchApp();
 
   } catch(e) {
-    console.error('Login error:', e);
+    
     showLoginError('Something went wrong. Please try again.');
   }
 }
@@ -828,9 +827,9 @@ function launchApp() {
   if (emName) emName.value = displayName;
   requestNotifPermission();
   // Sync PINs from Supabase on login (so device always has latest)
-  setTimeout(() => { try { syncPinsOnLogin(); } catch(e) { console.warn('PIN sync error:', e); } }, 800);
+  setTimeout(() => { try { syncPinsOnLogin(); } catch(e) {  } }, 800);
   // Init Supabase real-time if connected
-  setTimeout(() => { try { initRealtime(); } catch(e) { console.warn('Realtime init error:', e); } }, 1500);
+  setTimeout(() => { try { initRealtime(); } catch(e) {  } }, 1500);
   // Sync REQUESTS from Supabase on login
   if (isSupabaseEnabled()) {
     try {
@@ -840,10 +839,9 @@ function launchApp() {
           saveRequests(reqs); // keep local copy in sync
           goView(ROLES[role].nav[0]); // refresh view with cloud data
         }
-      }).catch(e => console.warn('Supabase load error on login:', e));
+      }).catch(e => { /* handled */ });
     } catch(e) {
-      console.warn('Supabase init error on login:', e);
-    }
+          }
   }
 }
 
@@ -1012,7 +1010,6 @@ function renderDashboard() {
     </div>
   </div>`;
 }
-
 
 // ── List view ──
 function renderList(mode) {
@@ -1429,7 +1426,6 @@ function saveDraft() {
   showToast('Draft saved — you can continue later.', 'success');
 }
 
-
 function submitRequest() {
   // Gather form values
   const equip    = document.getElementById('f-equip')    ? document.getElementById('f-equip').value.trim()    : '';
@@ -1669,7 +1665,7 @@ function openJobForm(id) {
   document.getElementById('app-main').innerHTML = `
   <div class="detail-back" onclick="goView('My Jobs')"><i class="ti ti-arrow-left"></i> Back to My Jobs</div>
 
-  <!-- SECTION 1 — Read only -->
+  
   <div class="form-section" style="border-left:4px solid var(--accent)">
     <div class="section-hdr"><span class="section-hdr-badge" style="background:var(--accent)">1</span>
       <span class="section-hdr-title">Request information — submitted by ${r.requester||'Ward Staff'}</span></div>
@@ -1689,7 +1685,7 @@ function openJobForm(id) {
     </div>
   </div>
 
-  <!-- SECTION 2 — Technician fills -->
+  
   <div class="form-section">
     <div class="section-hdr"><span class="section-hdr-badge">2</span>
       <span class="section-hdr-title">Biomedical Engineer / Technician use only</span></div>
@@ -1697,7 +1693,7 @@ function openJobForm(id) {
     <div class="sub-section">
       <div class="sub-section-title">Equipment details</div>
 
-      <!-- Equipment search from inventory -->
+      
       <div class="f-group" style="margin-bottom:14px">
         <label><i class="ti ti-search" style="font-size:11px;color:var(--blue)"></i> Link to equipment register</label>
         <div style="position:relative">
@@ -1784,7 +1780,7 @@ function openJobForm(id) {
     </div>
   </div>
 
-  <!-- SECTION 3 — Tap to sign -->
+  
   <div class="form-section">
     <div class="section-hdr"><span class="section-hdr-badge">3</span><span class="section-hdr-title">Signatures</span></div>
     <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px">Tap to confirm identity and digitally sign. Name and timestamp recorded automatically.</p>
@@ -1810,7 +1806,7 @@ function openJobForm(id) {
     </div>
   </div>
 
-  <!-- SECTION 4 — Supervisor validation -->
+  
   <div class="form-section" style="border-left:4px solid var(--navy)">
     <div class="section-hdr"><span class="section-hdr-badge" style="background:#444">4</span>
       <span class="section-hdr-title">Validation by Senior Biomedical Engineer — Office use only</span></div>
@@ -1902,15 +1898,13 @@ function getSupabase() {
   if (!cfg.enabled || !cfg.url || !cfg.anonKey) return null;
   // Wait for SDK to load
   if (!window.supabase || !window.supabase.createClient) {
-    console.warn('Supabase SDK not loaded yet');
-    return null;
+        return null;
   }
   try {
     _supabase = window.supabase.createClient(cfg.url, cfg.anonKey);
     return _supabase;
   } catch(e) {
-    console.warn('Supabase init error:', e);
-    return null;
+        return null;
   }
 }
 
@@ -1932,8 +1926,7 @@ async function loadRequestsAsync() {
     // Map snake_case DB columns to camelCase app fields
     return (data || []).map(dbToRequest);
   } catch(e) {
-    console.warn('Supabase read error, using localStorage:', e);
-    return loadRequests();
+        return loadRequests();
   }
 }
 
@@ -1956,8 +1949,7 @@ async function saveRequestAsync(req) {
     if (error) throw error;
     return dbToRequest(data);
   } catch(e) {
-    console.warn('Supabase write error, using localStorage:', e);
-    const reqs = loadRequests();
+        const reqs = loadRequests();
     const idx = reqs.findIndex(r => r.id === req.id);
     if (idx > -1) reqs[idx] = req; else reqs.unshift(req);
     saveRequests(reqs);
@@ -1977,8 +1969,7 @@ async function deleteRequestAsync(id) {
     const { error } = await sb.from('bm_requests').delete().eq('id', id);
     if (error) throw error;
   } catch(e) {
-    console.warn('Supabase delete error:', e);
-    let reqs = loadRequests();
+        let reqs = loadRequests();
     reqs = reqs.filter(r => r.id !== id);
     saveRequests(reqs);
   }
@@ -2005,8 +1996,7 @@ async function loadStaffAsync() {
       active: s.active !== false,
     }));
   } catch(e) {
-    console.warn('Supabase staff read error:', e);
-    return loadStaff();
+        return loadStaff();
   }
 }
 
@@ -2021,8 +2011,7 @@ async function saveStaffAsync(staffList) {
     if (error) throw error;
     saveStaff(staffList); // keep local copy in sync
   } catch(e) {
-    console.warn('Supabase staff write error:', e);
-    saveStaff(staffList);
+        saveStaff(staffList);
   }
 }
 
@@ -2032,7 +2021,7 @@ async function seedDefaultStaff(sb) {
       id: s.id, name: s.name, role: s.role,
       email: s.email||'', initials: s.initials, active: true
     })), { onConflict: 'id' });
-  } catch(e) { console.warn('Seed error:', e); }
+  } catch(e) {  }
 }
 
 // ── Field mapping helpers ──
@@ -2084,8 +2073,7 @@ function subscribeToRequests(callback) {
     .on('postgres_changes',
       { event: '*', schema: 'public', table: 'bm_requests' },
       (payload) => {
-        console.log('Real-time update:', payload.eventType);
-        callback(payload);
+                callback(payload);
       }
     )
     .subscribe();
@@ -2138,11 +2126,9 @@ async function sendEmail({ toEmail, toName, subject, eventType, requestId, equip
       app_url:     window.location.href,
       sent_at:     new Date().toLocaleString('en-GB'),
     });
-    console.log('Email sent to', toEmail);
-    return true;
+        return true;
   } catch(err) {
-    console.warn('EmailJS error:', err);
-    return false;
+        return false;
   }
 }
 
@@ -2155,7 +2141,7 @@ async function emailOnNewRequest(req) {
     await sendEmail({
       toEmail:     s.email,
       toName:      s.name,
-      subject:     '🔔 New Request — ' + req.id + ' · ' + req.equip,
+      subject:     'New Request — ' + req.id + ' · ' + req.equip,
       eventType:   'New Work Request Submitted',
       requestId:   req.id,
       equipment:   req.equip,
@@ -2176,14 +2162,14 @@ async function emailOnAssigned(req) {
     await sendEmail({
       toEmail:     tech.email,
       toName:      tech.name,
-      subject:     '🔧 Job Assigned — ' + req.id + ' · ' + req.equip,
+      subject:     'Job Assigned — ' + req.id + ' · ' + req.equip,
       eventType:   'Job Assigned to You',
       requestId:   req.id,
       equipment:   req.equip,
       department:  req.dept,
       technician:  req.tech,
       description: req.desc,
-      extraMsg:    'Please log in to the Biomedical Work Request System to complete this job.',
+      extraMsg:    'Please log in to complete this job.',
     });
   }
 }
@@ -2196,7 +2182,7 @@ async function emailOnCompleted(req) {
     await sendEmail({
       toEmail:     s.email,
       toName:      s.name,
-      subject:     '✅ Job Completed — ' + req.id + ' · ' + req.equip,
+      subject:     'Job Completed — ' + req.id + ' · ' + req.equip,
       eventType:   'Job Completed — Awaiting Your Validation',
       requestId:   req.id,
       equipment:   req.equip,
@@ -2212,14 +2198,14 @@ async function emailOnCompleted(req) {
     await sendEmail({
       toEmail:     requesterStaff.email,
       toName:      requesterStaff.name,
-      subject:     '✅ Your Request is Complete — ' + req.id,
+      subject:     'Your Request is Complete — ' + req.id,
       eventType:   'Your Work Request Has Been Completed',
       requestId:   req.id,
       equipment:   req.equip,
       department:  req.dept,
       technician:  req.tech,
       description: req.workPerformed || 'Work has been completed.',
-      extraMsg:    'Your equipment has been serviced. Please contact Biomedical Engineering if you have any concerns.',
+      extraMsg:    'Please contact Biomedical Engineering if you have concerns.',
     });
   }
 }
@@ -2232,14 +2218,14 @@ async function emailOnValidated(req) {
     await sendEmail({
       toEmail:     tech.email,
       toName:      tech.name,
-      subject:     '🏆 Job Validated — ' + req.id + ' · ' + req.equip,
+      subject:     'Job Validated — ' + req.id + ' · ' + req.equip,
       eventType:   'Job Validated by Supervisor',
       requestId:   req.id,
       equipment:   req.equip,
       department:  req.dept,
       technician:  req.tech,
       description: req.workPerformed || '',
-      extraMsg:    'This job has been validated by ' + (req.supervisorName || 'the supervisor') + ' and is now closed.',
+      extraMsg:    'This job has been validated and is now closed.',
     });
   }
   // Notify requester
@@ -2248,14 +2234,14 @@ async function emailOnValidated(req) {
     await sendEmail({
       toEmail:     requesterStaff.email,
       toName:      requesterStaff.name,
-      subject:     '🏆 Request Closed — ' + req.id + ' · ' + req.equip,
+      subject:     'Request Closed — ' + req.id + ' · ' + req.equip,
       eventType:   'Your Request Has Been Validated & Closed',
       requestId:   req.id,
       equipment:   req.equip,
       department:  req.dept,
       technician:  req.tech,
       description: req.workPerformed || '',
-      extraMsg:    'This request has been validated by ' + (req.supervisorName || 'the supervisor') + ' and is now officially closed.',
+      extraMsg:    'This request has been validated and is officially closed.',
     });
   }
 }
@@ -2434,7 +2420,7 @@ function renderReports() {
     <button class="btn btn-secondary btn-sm" onclick="exportCSV()"><i class="ti ti-download"></i>Export CSV</button>
   </div>
 
-  <!-- KPI Cards -->
+  
   <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin-bottom:16px">
     ${statCard('ti-clipboard-list','Total requests',total,'#0055A5','')}
     ${statCard('ti-circle-check','Completed & validated',completed+validated,'#1B7A3E',compPct+'% of all requests')}
@@ -2446,7 +2432,7 @@ function renderReports() {
     ${statCard('ti-clock','Avg resolution time',avgDays === '—' ? '—' : avgDays+'d','#0055A5','Request to completion')}
   </div>
 
-  <!-- Work Order Completion -->
+  
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
     <div class="detail-card">
       <div class="section-hdr"><span class="section-hdr-title">Work order status breakdown</span></div>
@@ -2495,7 +2481,7 @@ function renderReports() {
     </div>
   </div>
 
-  <!-- Validation status table -->
+  
   <div class="detail-card" style="margin-bottom:14px">
     <div class="section-hdr"><span class="section-hdr-title">Completed jobs — validation status</span></div>
     ${REQUESTS.filter(r=>r.status==='done'||r.status==='validated').length === 0
@@ -2525,7 +2511,7 @@ function renderReports() {
       </div>`}
   </div>
 
-  <!-- Pending Parts -->
+  
   ${(() => {
     const pendingParts = REQUESTS.filter(r => r.status === 'in-progress' && r.partsUsed && r.partsUsed.toLowerCase().includes('pending') || r.status === 'pending' ||
       (r.workPerformed && r.workPerformed.toLowerCase().includes('pending part')) ||
@@ -2592,7 +2578,7 @@ function renderReports() {
     </div>`;
   })()}
 
-  <!-- Overdue PMs -->
+  
   ${overdue.length > 0 ? `
   <div class="detail-card" style="border-left:4px solid var(--red)">
     <div class="section-hdr"><span class="section-hdr-title" style="color:var(--red)"><i class="ti ti-alert-triangle" style="margin-right:6px"></i>Overdue preventive maintenance (${overdue.length})</span></div>
@@ -2654,7 +2640,7 @@ function renderStaffManagement() {
     <div><div class="page-title">Staff management</div><div class="page-sub">${staff.length} staff members registered</div></div>
   </div>
 
-  <!-- PIN MANAGEMENT PANEL -->
+  
   <div class="form-section" style="margin-bottom:14px;border-left:4px solid var(--navy)">
     <div class="section-hdr">
       <span class="section-hdr-badge"><i class="ti ti-lock" style="font-size:11px"></i></span>
@@ -2761,7 +2747,7 @@ function renderStaffManagement() {
     </div>
   </div>
 
-  <!-- Supabase Config Panel -->
+  
   <div class="form-section" style="margin-bottom:14px;border-left:4px solid ${sbCfg.enabled && sbCfg.url ? 'var(--green)' : 'var(--accent)'}">
     <div class="section-hdr">
       <span class="section-hdr-badge" style="background:${sbCfg.enabled && sbCfg.url ? 'var(--green)' : 'var(--accent)'}">
@@ -2799,7 +2785,7 @@ function renderStaffManagement() {
     <div id="sb-test-result" style="margin-top:8px;font-size:12px"></div>
   </div>
 
-  <!-- Supabase Setup Guide -->
+  
   <div class="form-section" style="margin-bottom:14px;border-left:4px solid var(--accent)">
     <div class="section-hdr">
       <span class="section-hdr-badge" style="background:var(--accent)"><i class="ti ti-book" style="font-size:11px"></i></span>
@@ -2829,7 +2815,7 @@ function renderStaffManagement() {
     </div>
   </div>
 
-  <!-- EmailJS Config Panel -->
+  
   <div class="form-section" style="margin-bottom:14px;border-left:4px solid ${cfg.enabled && cfg.publicKey ? 'var(--green)' : '#F0C060'}">
     <div class="section-hdr">
       <span class="section-hdr-badge" style="background:${cfg.enabled && cfg.publicKey ? 'var(--green)' : '#8A6000'}">
@@ -2875,7 +2861,7 @@ function renderStaffManagement() {
     <div id="email-test-result" style="margin-top:8px;font-size:12px"></div>
   </div>
 
-  <!-- Add new staff -->
+  
   <div class="form-section" style="margin-bottom:14px">
     <div class="section-hdr"><span class="section-hdr-badge">Add</span><span class="section-hdr-title">Add new staff member</span></div>
     <div style="background:var(--light-blue);border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:var(--blue)">
@@ -2893,7 +2879,7 @@ function renderStaffManagement() {
     </div>
   </div>
 
-  <!-- Staff table -->
+  
   <div style="background:var(--card);border-radius:10px;box-shadow:var(--shadow);overflow:auto">
     <table style="width:100%;border-collapse:collapse;min-width:500px">
       <thead>
@@ -2908,7 +2894,7 @@ function renderStaffManagement() {
     </table>
   </div>
 
-  <!-- EmailJS Setup Guide -->
+  
   <div class="form-section" style="margin-top:14px;border-left:4px solid var(--accent)">
     <div class="section-hdr"><span class="section-hdr-badge" style="background:var(--accent)"><i class="ti ti-book" style="font-size:11px"></i></span>
       <span class="section-hdr-title">EmailJS setup guide (5 minutes)</span>
@@ -2974,7 +2960,7 @@ function addNewTechnician() {
   const name  = (input ? input.value : '').trim();
   if (!name) { showToast('Please enter a name first.'); return; }
   const staff = loadStaff();
-  const newMember = { id:'staff-'+Date.now(), name, email:'', role:'tech', initials:getInitials(name), active:true };
+  const newMember = { id:'staff-'+Date.now(), name, email, role, initials, active:true };
   staff.push(newMember);
   saveStaff(staff);
   if (sel) {
@@ -3059,7 +3045,6 @@ function getSigData(id) {
   if (!canvas) return '';
   return canvas.toDataURL('image/png');
 }
-
 
 // ══════════════════════════════════════════
 // NOTIFICATION SYSTEM
@@ -3308,7 +3293,6 @@ function removeFile(idx) {
   renderFilePreviews();
 }
 
-
 // ══════════════════════════════════════════
 // VOICE RECORDER + TRANSCRIPTION
 // ══════════════════════════════════════════
@@ -3414,8 +3398,7 @@ async function startRecording() {
     };
 
     speechRecog.onerror = (e) => {
-      console.warn('Speech recognition error:', e.error);
-      if (e.error === 'not-allowed') {
+            if (e.error === 'not-allowed') {
         showToast('Microphone access denied. Please allow microphone and try again.');
       }
     };
@@ -3551,7 +3534,6 @@ function closeEmergencyModal(e) {
   }
 }
 
-
 // ══════════════════════════════════════════
 // JOB ASSIGNMENT
 // ══════════════════════════════════════════
@@ -3653,7 +3635,6 @@ function unassignJob(id) {
   goView(view);
 }
 
-
 // ══════════════════════════════════════════
 // EMAIL SETTINGS HELPERS
 // ══════════════════════════════════════════
@@ -3729,7 +3710,6 @@ function editStaffEmail(id, currentEmail) {
   goView('Staff');
 }
 
-
 // ══════════════════════════════════════════
 // PIN MANAGEMENT HELPERS
 // ══════════════════════════════════════════
@@ -3803,7 +3783,6 @@ function resetPinsToDefault() {
   goView('Staff');
 }
 
-
 // ══════════════════════════════════════════
 // PWA INSTALL PROMPT
 // ══════════════════════════════════════════
@@ -3812,8 +3791,7 @@ let deferredInstallPrompt = null;
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredInstallPrompt = e;
-  console.log('Install prompt captured');
-  // Show install banner
+    // Show install banner
   setTimeout(showInstallBanner, 2000);
 });
 
@@ -3934,12 +3912,11 @@ if ('serviceWorker' in navigator) {
       const blob  = new Blob([swCode], {type:'text/javascript'});
       const swUrl = URL.createObjectURL(blob);
       navigator.serviceWorker.register(swUrl, {scope: './'})
-        .then(r => console.log('SW registered:', r.scope))
-        .catch(e => console.log('SW error (non-fatal):', e));
-    } catch(e) { console.log('SW not supported:', e); }
+        .then(r => { /* handled */ })
+        .catch(e => { /* SW error */ });
+    } catch(e) {  }
   });
 }
-
 
 // ══════════════════════════════════════════
 // SUPABASE SETTINGS HELPERS
@@ -4068,7 +4045,6 @@ function initRealtime() {
   });
 }
 
-
 // ══════════════════════════════════════════
 // INVENTORY DATA
 // ══════════════════════════════════════════
@@ -4118,7 +4094,7 @@ function renderInventory() {
     <div class="page-sub">Equipment register & supplies stock</div></div>
   </div>
 
-  <!-- Tab switcher -->
+  
   <div style="display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid var(--border)">
     <button onclick="switchInvTab('equipment')" id="itab-equipment"
       style="padding:10px 20px;background:${activeTab==='equipment'?'var(--navy)':'transparent'};color:${activeTab==='equipment'?'#fff':'var(--text-muted)'};border:none;cursor:pointer;font-size:13px;font-weight:600;border-radius:6px 6px 0 0;transition:all 0.15s">
@@ -4186,7 +4162,7 @@ function renderEquipmentTab() {
   };
 
   return `
-  <!-- Stats row -->
+  
   <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(110px,1fr));margin-bottom:14px">
     <div class="stat-card"><div class="stat-label">Total assets</div><div class="stat-value blue">${total}</div></div>
     <div class="stat-card"><div class="stat-label">Active</div><div class="stat-value green">${active}</div></div>
@@ -4195,7 +4171,7 @@ function renderEquipmentTab() {
     <div class="stat-card"><div class="stat-label">Retired</div><div class="stat-value" style="color:var(--text-muted)">${retired}</div></div>
   </div>
 
-  <!-- Filters + Add button -->
+  
   <div class="form-section" style="padding:12px 16px;margin-bottom:12px">
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
       <input type="text" id="eq-search" placeholder="Search ID, name, model, serial..." oninput="refreshEquipmentTable()"
@@ -4217,7 +4193,7 @@ function renderEquipmentTab() {
     </div>
   </div>
 
-  <!-- Add equipment form (hidden by default) -->
+  
   <div id="add-eq-form" style="display:none" class="form-section" style="margin-bottom:12px">
     <div class="section-hdr"><span class="section-hdr-badge"><i class="ti ti-plus" style="font-size:11px"></i></span><span class="section-hdr-title">Add new equipment</span></div>
     <div class="form-grid g3">
@@ -4245,7 +4221,7 @@ function renderEquipmentTab() {
     </div>
   </div>
 
-  <!-- Equipment table -->
+  
   <div style="background:var(--card);border-radius:10px;box-shadow:var(--shadow);overflow:auto">
     <div style="padding:10px 14px;font-size:12px;color:var(--text-muted);border-bottom:1px solid var(--border)">
       Showing ${filtered.length} of ${total} assets
@@ -4321,7 +4297,7 @@ function renderSuppliesTab() {
     </div>
   </div>
 
-  <!-- Add supply form -->
+  
   <div id="add-sup-form" style="display:none" class="form-section" style="margin-bottom:12px">
     <div class="section-hdr"><span class="section-hdr-badge"><i class="ti ti-plus" style="font-size:11px"></i></span><span class="section-hdr-title">Add new supply item</span></div>
     <div class="form-grid g3">
@@ -4344,7 +4320,7 @@ function renderSuppliesTab() {
     </div>
   </div>
 
-  <!-- Supplies table -->
+  
   <div style="background:var(--card);border-radius:10px;box-shadow:var(--shadow);overflow:auto">
     <table id="sup-table" style="width:100%;border-collapse:collapse;min-width:700px">
       <thead><tr style="background:var(--navy)">
@@ -4513,7 +4489,6 @@ function exportSuppliesCSV() {
   a.click();
   showToast('Supplies list exported!', 'success');
 }
-
 
 // ══════════════════════════════════════════
 // INVENTORY ↔ WORK REQUEST LINKING
@@ -4719,9 +4694,7 @@ function updateInventoryAfterJob(req) {
   }
 
   saveEquipment(eq);
-  console.log('Inventory updated for asset:', req.asset);
-}
-
+  }
 
 // ══════════════════════════════════════════
 // PIN SYNC VIA SUPABASE
@@ -4744,8 +4717,7 @@ async function loadPinsAsync() {
       return pins;
     }
   } catch(e) {
-    console.warn('Could not load PINs from Supabase:', e);
-  }
+      }
   return loadPins();
 }
 
@@ -4759,10 +4731,8 @@ async function savePinsAsync(pins) {
       .from('bm_settings')
       .upsert({ key: 'pins', value: JSON.stringify(pins) }, { onConflict: 'key' });
     if (error) throw error;
-    console.log('PINs synced to Supabase');
-  } catch(e) {
-    console.warn('Could not sync PINs to Supabase:', e);
-  }
+      } catch(e) {
+      }
 }
 
 // Save staff (with individual PINs) to Supabase
@@ -4786,10 +4756,8 @@ async function saveStaffPinsAsync(staffList) {
         { onConflict: 'id' }
       );
     if (error) throw error;
-    console.log('Staff PINs synced to Supabase');
-  } catch(e) {
-    console.warn('Could not sync staff PINs to Supabase:', e);
-  }
+      } catch(e) {
+      }
 }
 
 // On login, pull latest PINs from Supabase so device is always up to date
@@ -4818,10 +4786,9 @@ async function syncPinsOnLogin() {
         pin:      s.pin     || '',
       }));
       saveStaff(staff);
-      console.log('Staff PINs synced from Supabase on login');
-    }
+          }
   } catch(e) {
-    console.warn('PIN sync on login failed (non-fatal):', e);
+    /* handled */;
   }
 }
 
