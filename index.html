@@ -389,8 +389,8 @@
       </div>
     </div>
     <div class="topbar-right">
-      <button onclick="installApp()" title="Install app on your device" style="background:transparent;border:1px solid rgba(255,255,255,0.25);color:rgba(255,255,255,0.8);padding:5px 10px;border-radius:var(--radius);cursor:pointer;font-size:11px;display:flex;align-items:center;gap:5px;transition:all 0.15s" onmouseover="this.style.borderColor='rgba(255,255,255,0.6)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.25)'">
-        <i class="ti ti-download" style="font-size:13px"></i> Install
+      <button onclick="installApp()" title="Install app on your device" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.4);color:#fff;padding:5px 12px;border-radius:var(--radius);cursor:pointer;font-size:11px;display:flex;align-items:center;gap:5px">
+        <i class="ti ti-device-mobile-down" style="font-size:13px"></i> Install app
       </button>
       <button class="notif-btn" onclick="toggleNotifPanel()" id="notif-btn" title="Notifications">
         <i class="ti ti-bell"></i>
@@ -538,12 +538,12 @@ let role = 'user', view = '', prevView = '';
 // STAFF MANAGEMENT
 // ══════════════════════════════════════════
 const DEFAULT_STAFF = [
-  { id:'tech-1', name:'Y. Marrero', role:'tech', email:'joyltcs@gmail.com',              initials:'YM', active:true },
-  { id:'tech-2', name:'S. Prince',  role:'tech', email:'princealistair61@gmail.com',      initials:'SP', active:true },
-  { id:'tech-3', name:'D. Alexander',role:'tech',email:'dwightalexander4@gmail.com',      initials:'DA', active:true },
-  { id:'tech-4', name:'D. Nimrod',  role:'tech', email:'dennon.nimrod@hotmail.com',       initials:'DN', active:true },
-  { id:'tech-5', name:'K. Baptiste',role:'tech', email:'k.baptiste@health.gov.gd',        initials:'KB', active:true },
-  { id:'super-1',name:'DHS (Ag.)', role:'super', email:'Biomedical@health.gov.gd',        initials:'DS', active:true },
+  { id:'tech-1', name:'Y. Marrero',    role:'tech',  email:'joyltcs@gmail.com',           initials:'YM', active:true, pin:'2201' },
+  { id:'tech-2', name:'S. Prince',     role:'tech',  email:'princealistair61@gmail.com',   initials:'SP', active:true, pin:'3302' },
+  { id:'tech-3', name:'D. Alexander',  role:'tech',  email:'dwightalexander4@gmail.com',   initials:'DA', active:true, pin:'4403' },
+  { id:'tech-4', name:'D. Nimrod',     role:'tech',  email:'dennon.nimrod@hotmail.com',    initials:'DN', active:true, pin:'5504' },
+  { id:'tech-5', name:'K. Baptiste',   role:'tech',  email:'k.baptiste@health.gov.gd',     initials:'KB', active:true, pin:'6605' },
+  { id:'super-1',name:'K. Baptiste',   role:'super', email:'Biomedical@health.gov.gd',     initials:'KB', active:true, pin:'5253' },
 ];
 
 function loadStaff() {
@@ -587,7 +587,7 @@ function savePins(pins) {
 const ROLES = {
   user:  { label: 'Ward User',  name: 'Ward Staff',           email: 'ward.staff@health.gov.gd',       initials: 'WS', nav: ['New Request', 'My Requests', 'History', 'Inventory'] },
   tech:  { label: 'Technician', name: 'Y. Marrero',             email: 'dwightalexander4@gmail.com',           initials: 'JS', nav: ['My Jobs', 'All Requests', 'New Request', 'History', 'Inventory'] },
-  super: { label: 'Supervisor', name: 'DHS (Ag.)',            email: 'Biomedical@health.gov.gd',    initials: 'DS', nav: ['Dashboard', 'All Requests', 'New Request', 'My Jobs', 'History', 'Inventory', 'Reports'] },
+  super: { label: 'Senior Biomedical Engineer', name: 'K. Baptiste', email: 'Biomedical@health.gov.gd', initials: 'KB', nav: ['Dashboard', 'All Requests', 'New Request', 'My Jobs', 'History', 'Inventory', 'Reports'] },
 };
 
 // ── Seed data (only inserted once if localStorage is empty) ──
@@ -697,18 +697,95 @@ function doLogin() {
 
 function showNamePicker() {
   document.getElementById('login-card').style.display = 'none';
-  document.getElementById('name-picker-card').style.display = 'block';
+  const card = document.getElementById('name-picker-card');
+  card.style.display = 'block';
+  // Update heading
+  const heading = card.querySelector('div[style*="font-size:17px"]');
+  if (heading) heading.textContent = 'Who are you?';
+  const sub = card.querySelector('div[style*="font-size:12px"]');
+  if (sub) sub.textContent = 'Select your name and enter your personal PIN';
+
   const techs = getTechList();
   document.getElementById('name-picker-list').innerHTML = techs.map(t => `
-    <button onclick="selectTechName('${t.id}')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius);background:#fff;cursor:pointer;text-align:left;transition:all 0.15s;width:100%"
-      onmouseover="this.style.borderColor='var(--navy)';this.style.background='var(--light-blue)'"
-      onmouseout="this.style.borderColor='var(--border)';this.style.background='#fff'">
-      <div style="width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0">${t.initials}</div>
-      <div>
-        <div style="font-size:14px;font-weight:600;color:var(--navy)">${t.name}</div>
-        <div style="font-size:11px;color:var(--text-muted)">${t.email}</div>
+    <div style="border:1.5px solid var(--border);border-radius:var(--radius);background:#fff;overflow:hidden;margin-bottom:2px">
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;cursor:pointer;transition:all 0.15s"
+        onclick="toggleTechPinEntry('${t.id}')"
+        onmouseover="this.style.background='var(--light-blue)'"
+        onmouseout="this.style.background='#fff'">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0">${t.initials}</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600;color:var(--navy)">${t.name}</div>
+          <div style="font-size:11px;color:var(--text-muted)">Tap to enter your PIN</div>
+        </div>
+        <i class="ti ti-chevron-right" id="chev-${t.id}" style="color:var(--text-muted);font-size:16px"></i>
       </div>
-    </button>`).join('');
+      <div id="pin-entry-${t.id}" style="display:none;padding:10px 14px;background:var(--surface);border-top:1px solid var(--border)">
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="password" id="tech-pin-${t.id}" placeholder="Enter your PIN"
+            style="flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:16px;letter-spacing:4px"
+            onkeydown="if(event.key==='Enter')verifyTechPin('${t.id}')"
+            autocomplete="current-password">
+          <button onclick="verifyTechPin('${t.id}')" class="btn btn-primary" style="padding:9px 16px;white-space:nowrap">
+            <i class="ti ti-arrow-right"></i> Go
+          </button>
+        </div>
+        <div id="tech-pin-error-${t.id}" style="color:var(--red);font-size:11px;margin-top:6px;display:none">
+          Incorrect PIN. Please try again.
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleTechPinEntry(staffId) {
+  const techs = getTechList();
+  // Close all other entries first
+  techs.forEach(t => {
+    if (t.id !== staffId) {
+      const entry = document.getElementById('pin-entry-' + t.id);
+      const chev  = document.getElementById('chev-' + t.id);
+      if (entry) entry.style.display = 'none';
+      if (chev)  chev.style.transform = '';
+    }
+  });
+  const entry = document.getElementById('pin-entry-' + staffId);
+  const chev  = document.getElementById('chev-' + staffId);
+  if (!entry) return;
+  const isOpen = entry.style.display !== 'none';
+  entry.style.display = isOpen ? 'none' : 'block';
+  if (chev) chev.style.transform = isOpen ? '' : 'rotate(90deg)';
+  if (!isOpen) {
+    setTimeout(() => {
+      const pinEl = document.getElementById('tech-pin-' + staffId);
+      if (pinEl) pinEl.focus();
+    }, 100);
+  }
+}
+
+function verifyTechPin(staffId) {
+  const staff   = loadStaff().find(s => s.id === staffId);
+  if (!staff) return;
+  const pinEl   = document.getElementById('tech-pin-' + staffId);
+  const errEl   = document.getElementById('tech-pin-error-' + staffId);
+  const entered = pinEl ? pinEl.value.trim() : '';
+
+  // Check individual PIN first, fallback to shared tech PIN
+  const PINS     = loadPins();
+  const validPin = staff.pin || PINS.tech;
+
+  if (entered !== validPin) {
+    if (errEl) errEl.style.display = 'block';
+    if (pinEl) {
+      pinEl.value = '';
+      pinEl.style.borderColor = 'var(--red)';
+      setTimeout(() => { pinEl.style.borderColor = ''; }, 2000);
+    }
+    return;
+  }
+
+  if (errEl) errEl.style.display = 'none';
+  currentUserName     = staff.name;
+  currentUserInitials = staff.initials;
+  launchApp();
 }
 
 function selectTechName(staffId) {
@@ -750,6 +827,8 @@ function launchApp() {
   const emName = document.getElementById('em-name');
   if (emName) emName.value = displayName;
   requestNotifPermission();
+  // Sync PINs from Supabase on login (so device always has latest)
+  setTimeout(() => { try { syncPinsOnLogin(); } catch(e) { console.warn('PIN sync error:', e); } }, 800);
   // Init Supabase real-time if connected
   setTimeout(() => { try { initRealtime(); } catch(e) { console.warn('Realtime init error:', e); } }, 1500);
   // Sync REQUESTS from Supabase on login
@@ -1582,137 +1661,148 @@ function openJobForm(id) {
   REQUESTS = loadRequests();
   const r = REQUESTS.find(x => x.id === id);
   if (!r) return;
-
   const sigTime = new Date().toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
-
-  const pmRows = PM_CHECKLIST.map(sec => `
-    <div class="pm-section-hdr">${sec.section}</div>
-    ${sec.items.map(item=>`
-    <div class="pm-row">
-      <input type="checkbox">
-      <div class="pm-row-label">${item}</div>
-      <input type="text" placeholder="Remarks / readings">
-    </div>`).join('')}`).join('');
+  const natures  = ['Preventive Maintenance','Corrective Repair','Calibration / Testing','Installation / Setup','Safety Inspection','User Training','Decommission / Disposal','Other'];
+  const freqs    = ['Weekly','Monthly','Quarterly','6-Monthly','Annually','As Required'];
+  const statuses = ['Completed','Still in progress','Pending parts','Referred to vendor','Equipment condemned'];
 
   document.getElementById('app-main').innerHTML = `
   <div class="detail-back" onclick="goView('My Jobs')"><i class="ti ti-arrow-left"></i> Back to My Jobs</div>
 
-  <!-- SECTION 1 — Read-only, pre-filled from user request -->
+  <!-- SECTION 1 — Read only -->
   <div class="form-section" style="border-left:4px solid var(--accent)">
     <div class="section-hdr"><span class="section-hdr-badge" style="background:var(--accent)">1</span>
-      <span class="section-hdr-title">Request Information — submitted by ${r.requester||'Ward Staff'}</span>
+      <span class="section-hdr-title">Request information — submitted by ${r.requester||'Ward Staff'}</span></div>
+    <div style="background:var(--light-blue);border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:var(--blue)">
+      <i class="ti ti-lock" style="margin-right:4px"></i>Completed by the ward user — locked for reference.
     </div>
-    <div style="background:var(--light-blue);border-radius:6px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--blue)">
-      <i class="ti ti-lock" style="margin-right:6px"></i>This section was completed by the ward user and is locked for reference only.
-    </div>
-    <div class="detail-grid" style="margin-bottom:10px">
-      <div class="detail-field"><label>Request No.</label><span>${r.id}</span></div>
-      <div class="detail-field"><label>Date & time</label><span>${r.date}</span></div>
+    <div class="detail-grid">
+      <div class="detail-field"><label>Request ID</label><span>${r.id}</span></div>
+      <div class="detail-field"><label>Date submitted</label><span>${r.date}</span></div>
       <div class="detail-field"><label>Requester</label><span>${r.requester||'Ward Staff'}</span></div>
       <div class="detail-field"><label>Department</label><span>${r.dept}</span></div>
       <div class="detail-field"><label>Equipment</label><span>${r.equip}</span></div>
       <div class="detail-field"><label>Service type</label><span>${r.serviceType||'—'}</span></div>
     </div>
-    <div class="detail-field"><label>Description of request / problem</label>
-      <div style="font-size:13px;padding:10px;background:#fff;border-radius:6px;border:1px solid var(--border);line-height:1.6">${r.desc}</div>
+    <div class="f-group" style="margin-top:10px"><label>Description / problem reported</label>
+      <div style="padding:10px;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);font-size:13px;line-height:1.6">${r.desc}</div>
     </div>
   </div>
 
-  <!-- SECTION 2 — Technician completes -->
+  <!-- SECTION 2 — Technician fills -->
   <div class="form-section">
-    <div class="section-hdr"><span class="section-hdr-badge">2</span><span class="section-hdr-title">Biomedical Engineer / Technician Use Only</span></div>
-    <div class="form-grid g2">
-      <div class="f-group"><label>Assigned technician</label>
-        <input type="text" id="jf-tech" value="${currentUserName}" readonly style="background:var(--surface);color:var(--text-muted)">
-      </div>
-      <div class="f-group"><label>Priority</label>
-        <select id="jf-priority"><option value="high" ${r.priority==='high'?'selected':''}>High</option><option value="medium" ${r.priority==='medium'?'selected':''}>Medium</option><option value="low" ${r.priority==='low'?'selected':''}>Low</option></select>
-      </div>
-    </div>
-    <div class="form-grid g2">
-      <div class="f-group"><label>Date &amp; time work commenced</label><input type="datetime-local" id="jf-commenced" value="${new Date().toISOString().slice(0,16)}"></div>
-      <div class="f-group"><label>Date &amp; time work completed</label><input type="datetime-local" id="jf-completed"></div>
-    </div>
+    <div class="section-hdr"><span class="section-hdr-badge">2</span>
+      <span class="section-hdr-title">Biomedical Engineer / Technician use only</span></div>
+
     <div class="sub-section">
       <div class="sub-section-title">Equipment details</div>
+
+      <!-- Equipment search from inventory -->
+      <div class="f-group" style="margin-bottom:14px">
+        <label><i class="ti ti-search" style="font-size:11px;color:var(--blue)"></i> Link to equipment register</label>
+        <div style="position:relative">
+          <input type="text" id="jf-inv-search"
+            placeholder="Search by asset ID, name or department to auto-fill details..."
+            oninput="searchInventoryForJob(this.value)"
+            style="width:100%;padding:9px 12px;border:1.5px solid var(--accent);border-radius:var(--radius);font-size:13px;background:#fff"
+            autocomplete="off">
+          <div id="jf-inv-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid var(--accent);border-top:none;border-radius:0 0 var(--radius) var(--radius);max-height:220px;overflow-y:auto;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,0.12)"></div>
+        </div>
+        <div id="jf-inv-linked" style="display:none;background:var(--green-bg);border:1px solid var(--green);border-radius:6px;padding:8px 12px;margin-top:6px;font-size:12px;color:var(--green);display:none;align-items:center;gap:8px">
+          <i class="ti ti-circle-check" style="font-size:16px;flex-shrink:0"></i>
+          <span id="jf-inv-linked-text"></span>
+          <button onclick="clearInventoryLink()" style="margin-left:auto;background:none;border:none;color:var(--green);cursor:pointer;font-size:11px;text-decoration:underline">Clear</button>
+        </div>
+      </div>
+
       <div class="form-grid g2">
-        <div class="f-group"><label>Manufacturer / brand</label><input type="text" id="jf-manufacturer" value="${r.manufacturer||''}"></div>
-        <div class="f-group"><label>Last service date</label><input type="date" id="jf-lastservice" value="${r.lastService||''}"></div>
+        <div class="f-group"><label>Assigned technician</label>
+          <input type="text" id="jf-tech" value="${currentUserName}" readonly style="background:var(--surface);color:var(--text-muted)">
+        </div>
+        <div class="f-group"><label>Manufacturer / brand</label>
+          <input type="text" id="jf-manufacturer" value="${r.manufacturer||''}" placeholder="e.g. Philips">
+        </div>
       </div>
       <div class="form-grid g3">
         <div class="f-group"><label>Model number</label><input type="text" id="jf-model" value="${r.model||''}"></div>
         <div class="f-group"><label>Serial number</label><input type="text" id="jf-serial" value="${r.serial||''}"></div>
-        <div class="f-group"><label>Asset / inventory tag</label><input type="text" id="jf-asset" value="${r.asset||''}"></div>
+        <div class="f-group"><label>Asset / inventory tag</label><input type="text" id="jf-asset" value="${r.asset||''}" placeholder="BM-XXXX"></div>
       </div>
-      <div class="form-grid g1">
+      <div class="form-grid g2">
         <div class="f-group"><label>Location (building / room)</label><input type="text" id="jf-location" value="${r.location||r.dept}"></div>
+        <div class="f-group"><label>Last service date</label><input type="date" id="jf-lastservice" value="${r.lastService||''}"></div>
       </div>
     </div>
+
     <div class="sub-section">
       <div class="sub-section-title">Nature of work</div>
-      <div class="f-group" style="margin-bottom:10px"><label>Primary nature of work</label>
-        <select id="jf-nature">
-          <option value="">Select...</option>
-          ${['Preventive Maintenance','Corrective Repair','Calibration / Testing','Installation / Setup','Safety Inspection','User Training','Decommission / Disposal','Other'].map(o=>`<option ${r.nature===o?'selected':''}>${o}</option>`).join('')}
-        </select>
-      </div>
-      <div class="f-group" style="margin-bottom:10px"><label>Frequency of service</label>
-        <select id="jf-freq"><option value="">Select...</option>${['Weekly','Monthly','Quarterly','6-Monthly','Annually','As Required'].map(f=>`<option ${r.freq===f?'selected':''}>${f}</option>`).join('')}</select>
+      <div class="form-grid g2">
+        <div class="f-group"><label>Primary nature of work</label>
+          <select id="jf-nature">
+            <option value="">Select...</option>
+            ${natures.map(o=>`<option value="${o}" ${r.nature===o?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </div>
+        <div class="f-group"><label>Frequency of service</label>
+          <select id="jf-freq">
+            <option value="">Select...</option>
+            ${freqs.map(f=>`<option value="${f}" ${r.freq===f?'selected':''}>${f}</option>`).join('')}
+          </select>
+        </div>
       </div>
       <div class="form-grid g2">
         <div class="f-group"><label>Next PM date</label><input type="date" id="jf-nextpm" value="${r.nextPM||''}"></div>
-        <div class="f-group"><label>Parts / materials used</label><input type="text" id="jf-parts" value="${r.partsUsed||''}" placeholder="List any parts..."></div>
+        <div class="f-group"><label>Parts / materials used</label>
+          <input type="text" id="jf-parts" value="${r.partsUsed||''}" placeholder="List any parts or materials...">
+        </div>
       </div>
-      <div class="f-group" style="margin-bottom:12px"><label>Fault description / additional notes</label><textarea id="jf-fault">${r.faultDesc||''}</textarea></div>
-      <div class="f-group" style="margin-bottom:12px"><label>Work performed / findings</label><textarea id="jf-work">${r.workPerformed||''}</textarea></div>
-      <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:8px">Job status</div>
-      <div class="chk-grid">
-        ${['Completed','Pending Parts','Referred to Vendor','Equipment Condemned'].map(s=>`<label class="chk-label"><input type="checkbox" ${r.status===s.toLowerCase()?'checked':''}> ${s}</label>`).join('')}
+      <div class="f-group"><label>Fault description / findings</label>
+        <textarea id="jf-fault" style="min-height:80px">${r.faultDesc||''}</textarea>
+      </div>
+      <div class="f-group"><label>Work performed</label>
+        <textarea id="jf-work" placeholder="Describe all work carried out..." style="min-height:100px">${r.workPerformed||''}</textarea>
       </div>
     </div>
-    <!-- File upload -->
-    <div class="f-group" style="margin-top:12px">
-      <label>Upload work files / photos</label>
-      <div class="upload-zone" onclick="document.getElementById('jf-file-input').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
-        <i class="ti ti-cloud-upload"></i>
-        <p style="font-weight:600;color:var(--text)">Tap to upload or drag & drop</p>
-        <p>Photos, PDFs, documents accepted</p>
-      </div>
-      <input type="file" id="jf-file-input" multiple accept="image/*,application/pdf,.doc,.docx" style="display:none" onchange="handleFileSelect(this.files)">
-      <div class="file-preview-grid" id="file-preview"></div>
-    </div>
-  </div>
 
-  <!-- PM CHECKLIST -->
-  <div class="form-section">
-    <div class="section-hdr"><span class="section-hdr-badge">PM</span><span class="section-hdr-title">Preventive Maintenance Checklist</span></div>
-    <div style="border-radius:6px;overflow:hidden;border:1px solid var(--border)">
-      <div style="background:var(--navy);color:#fff;padding:7px 12px;display:grid;grid-template-columns:1fr 36px 180px;gap:10px;font-size:11px;font-weight:700">
-        <span>Check item</span><span style="text-align:center">Done</span><span>Remarks / readings</span>
+    <div class="form-grid g2">
+      <div class="f-group"><label>Date & time commenced</label>
+        <input type="datetime-local" id="jf-commenced" value="${new Date().toISOString().slice(0,16)}">
       </div>
-      ${pmRows}
+      <div class="f-group"><label>Date & time completed</label>
+        <input type="datetime-local" id="jf-completed">
+      </div>
+    </div>
+
+    <div class="f-group"><label>Job status</label>
+      <select id="jf-status">
+        <option value="done">Completed</option>
+        <option value="in-progress">Still in progress</option>
+        <option value="pending">Pending parts</option>
+        <option value="referred">Referred to vendor</option>
+        <option value="condemned">Equipment condemned</option>
+      </select>
     </div>
   </div>
 
   <!-- SECTION 3 — Tap to sign -->
   <div class="form-section">
     <div class="section-hdr"><span class="section-hdr-badge">3</span><span class="section-hdr-title">Signatures</span></div>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px">Tap the button to confirm your identity and digitally sign. Your name and timestamp are recorded automatically.</p>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px">Tap to confirm identity and digitally sign. Name and timestamp recorded automatically.</p>
     <div class="sig-grid g2">
       <div class="tap-sign-box">
         <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;margin-bottom:10px">Requested by</div>
-        <div id="ts-requester-pending" style="text-align:center">
-          <button class="btn btn-primary" onclick="tapToSign('requester','${r.requester||'Ward Staff'}','${sigTime}')" style="width:100%;padding:14px;font-size:13px">
-            <i class="ti ti-fingerprint" style="font-size:18px"></i> Tap to sign as ${r.requester||'Ward Staff'}
+        <div id="ts-requester-pending">
+          <button class="btn btn-primary" onclick="tapToSign('requester','${r.requester||'Ward Staff'}','${sigTime}')" style="width:100%;padding:12px;font-size:13px">
+            <i class="ti ti-fingerprint" style="font-size:18px"></i> Sign as ${r.requester||'Ward Staff'}
           </button>
         </div>
         <div id="ts-requester-signed" style="display:none"></div>
       </div>
       <div class="tap-sign-box">
-        <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;margin-bottom:10px">Biomedical Engineer / Technician</div>
-        <div id="ts-tech-pending" style="text-align:center">
-          <button class="btn btn-primary" onclick="tapToSign('tech','${currentUserName}','${sigTime}')" style="width:100%;padding:14px;font-size:13px">
-            <i class="ti ti-fingerprint" style="font-size:18px"></i> Tap to sign as ${currentUserName}
+        <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;margin-bottom:10px">Biomedical Technician</div>
+        <div id="ts-tech-pending">
+          <button class="btn btn-primary" onclick="tapToSign('tech','${currentUserName}','${sigTime}')" style="width:100%;padding:12px;font-size:13px">
+            <i class="ti ti-fingerprint" style="font-size:18px"></i> Sign as ${currentUserName}
           </button>
         </div>
         <div id="ts-tech-signed" style="display:none"></div>
@@ -1720,13 +1810,14 @@ function openJobForm(id) {
     </div>
   </div>
 
-  <!-- SECTION 4 — HOD Validation -->
+  <!-- SECTION 4 — Supervisor validation -->
   <div class="form-section" style="border-left:4px solid var(--navy)">
-    <div class="section-hdr"><span class="section-hdr-badge" style="background:#444">4</span><span class="section-hdr-title">Validation by HOD / Supervisor — Office Use Only</span></div>
+    <div class="section-hdr"><span class="section-hdr-badge" style="background:#444">4</span>
+      <span class="section-hdr-title">Validation by Senior Biomedical Engineer — Office use only</span></div>
     <div class="tap-sign-box">
-      <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;margin-bottom:10px">HOD / Supervisor</div>
-      <div id="ts-hod-pending" style="text-align:center">
-        <button class="btn btn-primary" onclick="tapToSign('hod','${ROLES.super.name}','${sigTime}')" style="width:100%;padding:14px;font-size:13px">
+      <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;margin-bottom:10px">Senior Biomedical Engineer</div>
+      <div id="ts-hod-pending">
+        <button class="btn btn-primary" onclick="tapToSign('hod','${ROLES.super.name}','${sigTime}')" style="width:100%;padding:12px;font-size:13px">
           <i class="ti ti-fingerprint" style="font-size:18px"></i> Supervisor taps here to validate
         </button>
       </div>
@@ -1736,7 +1827,9 @@ function openJobForm(id) {
 
   <div class="form-actions">
     <button class="btn btn-secondary" onclick="goView('My Jobs')">Cancel</button>
-    <button class="btn btn-primary" onclick="saveJobForm('${r.id}')"><i class="ti ti-circle-check"></i> Save &amp; complete job</button>
+    <button class="btn btn-primary" onclick="saveJobForm('${r.id}')">
+      <i class="ti ti-circle-check"></i> Save & complete job
+    </button>
   </div>`;
   window.scrollTo(0,0);
 }
@@ -1772,6 +1865,7 @@ function saveJobForm(id) {
   saveRequestAsync(reqs[idx]); // sync to Supabase
   addNotification('Job completed — ' + id, 'Completed by ' + currentUserName + '. Ready for supervisor validation.', 'done', id);
   emailOnCompleted(reqs[idx]);
+  updateInventoryAfterJob(reqs[idx]); // sync PPM dates back to inventory
   showToast(id + ' saved and marked complete!', 'success');
   setTimeout(() => goView('My Jobs'), 1400);
 }
@@ -2569,7 +2663,26 @@ function renderStaffManagement() {
     </div>
     <div style="background:#FFF8E6;border:1px solid #F0C060;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#7A5500;line-height:1.6">
       <i class="ti ti-shield-lock" style="margin-right:6px"></i>
-      Change any login PIN here. PINs are stored securely on this device. Share new PINs directly with your staff — never send via email or message.
+      Each technician has their own personal PIN. Change them below. Share PINs directly with staff — never via email or message.
+    </div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:8px">Individual technician PINs</div>
+      <div style="display:grid;gap:8px">
+        ${getTechList().map(t=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border)">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${t.initials}</div>
+          <div style="flex:1;font-size:13px;font-weight:600">${t.name}</div>
+          <div style="position:relative">
+            <input type="password" id="tpin-${t.id}" value="${t.pin||pins.tech}"
+              style="padding:7px 36px 7px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;letter-spacing:3px;width:130px"
+              autocomplete="new-password">
+            <button onclick="togglePinVisibility('tpin-${t.id}','teye-${t.id}')"
+              style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted)">
+              <i class="ti ti-eye" id="teye-${t.id}" style="font-size:14px"></i>
+            </button>
+          </div>
+        </div>`).join('')}
+      </div>
     </div>
     <div class="form-grid g3">
       <div class="f-group">
@@ -2631,6 +2744,15 @@ function renderStaffManagement() {
         </button>
       </div>
       <div id="pin-save-result" style="margin-top:8px;font-size:12px"></div>
+      ${isSupabaseEnabled() ? `
+      <div style="margin-top:6px;padding:8px 12px;background:var(--green-bg);border-radius:6px;font-size:11px;color:var(--green);display:flex;align-items:center;gap:6px">
+        <i class="ti ti-cloud-check" style="font-size:14px"></i>
+        <strong>Supabase connected</strong> — PIN changes will sync to all devices automatically.
+      </div>` : `
+      <div style="margin-top:6px;padding:8px 12px;background:#FFF8E6;border-radius:6px;font-size:11px;color:#8A5200;display:flex;align-items:center;gap:6px">
+        <i class="ti ti-cloud-off" style="font-size:14px"></i>
+        Supabase not connected — PINs will only change on this device. Connect Supabase above to sync across all devices.
+      </div>`}
       <div style="margin-top:8px">
         <button onclick="resetPinsToDefault()" style="background:none;border:none;color:var(--text-muted);font-size:11px;cursor:pointer;text-decoration:underline;padding:0">
           Reset all PINs to factory defaults
@@ -2690,6 +2812,7 @@ function renderStaffManagement() {
           ['2','Click <strong>New project</strong> → name it <strong>biomedical-grenada</strong> → choose a strong database password → select nearest region → click <strong>Create new project</strong> (takes ~2 minutes)'],
           ['3','Once ready, go to <strong>Project Settings → API</strong> → copy your <strong>Project URL</strong> and <strong>anon public key</strong> → paste them above'],
                     ['4','Go to <strong>SQL Editor</strong> in your Supabase project → click <strong>New query</strong> → paste the SQL from the setup file provided and click <strong>Run</strong>. You should see: Success. No rows returned.'],
+          ['4b','Also run this SQL to create the settings table (needed for PIN sync):<br><strong>create table if not exists bm_settings (key text primary key, value text); alter table bm_settings enable row level security; create policy allow_all_settings on bm_settings for all using (true) with check (true);</strong>'],
           ['5','Back in the app: paste your <strong>Project URL</strong> and <strong>Anon Key</strong> above → tick <strong>Enable Supabase</strong> → click <strong>Save</strong>'],
           ['6','Click <strong>Test connection</strong> to verify → then click <strong>Migrate local data to cloud</strong> to move any existing requests to Supabase'],
           ['7','Done! All devices now share the same live database. Real-time updates happen automatically.'],
@@ -3624,22 +3747,31 @@ function savePinChanges() {
   }
 
   const newUser  = (document.getElementById('pin-user') ||{value:''}).value.trim();
-  const newTech  = (document.getElementById('pin-tech') ||{value:''}).value.trim();
   const newSuper = (document.getElementById('pin-super')||{value:''}).value.trim();
 
-  // Validate — no empty PINs
-  if (!newUser || !newTech || !newSuper) {
-    if (result) result.innerHTML = '<span style="color:var(--red)"><i class="ti ti-x"></i> PINs cannot be empty.</span>';
+  if (!newUser || !newSuper) {
+    if (result) result.innerHTML = '<span style="color:var(--red)"><i class="ti ti-x"></i> Ward and Supervisor PINs cannot be empty.</span>';
     return;
   }
 
-  // Warn if all three are the same
-  if (newUser === newTech && newTech === newSuper) {
-    if (!confirm('Warning: all three PINs are the same. This reduces security. Continue?')) return;
-  }
+  // Save shared PINs
+  const newPins = { user: newUser, tech: loadPins().tech, super: newSuper };
 
-  const newPins = { user: newUser, tech: newTech, super: newSuper };
-  savePins(newPins);
+  // Save individual tech PINs
+  const staff = loadStaff();
+  let changed = 0;
+  staff.forEach(s => {
+    if (s.role !== 'tech') return;
+    const el = document.getElementById('tpin-' + s.id);
+    if (el && el.value.trim()) {
+      s.pin = el.value.trim();
+      changed++;
+    }
+  });
+
+  // Sync everything to Supabase
+  savePinsAsync(newPins);
+  saveStaffPinsAsync(staff);
 
   if (result) result.innerHTML = '<span style="color:var(--green)"><i class="ti ti-circle-check"></i> All PINs updated successfully! Share new PINs with staff securely.</span>';
 
@@ -3665,7 +3797,8 @@ function togglePinVisibility(inputId, iconId) {
 
 function resetPinsToDefault() {
   if (!confirm('Reset all PINs to factory defaults?\nUser: 1234  |  Tech: 1313  |  Supervisor: 5253\n\nThis cannot be undone.')) return;
-  savePins({ user:'1234', tech:'1313', super:'5253' });
+  const defaultPins = { user:'1234', tech:'1313', super:'5253' };
+  savePinsAsync(defaultPins);
   showToast('PINs reset to default values.', '');
   goView('Staff');
 }
@@ -4379,6 +4512,317 @@ function exportSuppliesCSV() {
   a.download = 'Supplies_List_' + new Date().toISOString().slice(0,10) + '.csv';
   a.click();
   showToast('Supplies list exported!', 'success');
+}
+
+
+// ══════════════════════════════════════════
+// INVENTORY ↔ WORK REQUEST LINKING
+// ══════════════════════════════════════════
+
+// Search inventory for job form (tech fills in)
+function searchInventoryForJob(query) {
+  const dropdown = document.getElementById('jf-inv-dropdown');
+  if (!dropdown) return;
+  if (!query || query.length < 2) {
+    dropdown.style.display = 'none';
+    return;
+  }
+
+  const eq = loadEquipment();
+  const q  = query.toLowerCase();
+  const matches = eq.filter(e =>
+    (e.Asset_ID      && e.Asset_ID.toLowerCase().includes(q)) ||
+    (e.Equipment_Type && e.Equipment_Type.toLowerCase().includes(q)) ||
+    (e.Manufacturer  && e.Manufacturer.toLowerCase().includes(q)) ||
+    (e.Model         && e.Model.toLowerCase().includes(q)) ||
+    (e.Serial        && e.Serial.toLowerCase().includes(q)) ||
+    (e.Department    && e.Department.toLowerCase().includes(q))
+  ).slice(0, 10);
+
+  if (!matches.length) {
+    dropdown.innerHTML = '<div style="padding:12px;font-size:12px;color:var(--text-muted);text-align:center">No matching equipment found — fill in manually below</div>';
+    dropdown.style.display = 'block';
+    return;
+  }
+
+  dropdown.innerHTML = matches.map(e => `
+    <div onclick="selectInventoryItem('${e.Asset_ID}')"
+      style="padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background 0.1s"
+      onmouseover="this.style.background='var(--light-blue)'"
+      onmouseout="this.style.background='#fff'">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font-family:monospace;font-size:11px;font-weight:700;color:var(--blue);white-space:nowrap">${e.Asset_ID}</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;color:var(--navy)">${e.Equipment_Type||'Unknown'}</div>
+          <div style="font-size:11px;color:var(--text-muted)">${[e.Manufacturer,e.Model,e.Department].filter(Boolean).join(' · ')}</div>
+        </div>
+        <span class="badge ${e.Equipment_Status==='Active'?'badge-done':'badge-progress'}" style="font-size:10px;flex-shrink:0">${e.Equipment_Status||'Unknown'}</span>
+      </div>
+    </div>`).join('');
+  dropdown.style.display = 'block';
+
+  // Close dropdown when clicking outside
+  setTimeout(() => {
+    document.addEventListener('click', function closeDropdown(e) {
+      if (!dropdown.contains(e.target)) {
+        dropdown.style.display = 'none';
+        document.removeEventListener('click', closeDropdown);
+      }
+    });
+  }, 100);
+}
+
+function selectInventoryItem(assetId) {
+  const eq = loadEquipment();
+  const item = eq.find(e => e.Asset_ID === assetId);
+  if (!item) return;
+
+  // Auto-fill all equipment fields
+  const fields = {
+    'jf-manufacturer': item.Manufacturer || '',
+    'jf-model':        item.Model        || '',
+    'jf-serial':       item.Serial       || '',
+    'jf-asset':        item.Asset_ID     || '',
+    'jf-location':     item.Department   || '',
+    'jf-lastservice':  item.Last_PPM_Date|| '',
+  };
+
+  Object.entries(fields).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  });
+
+  // Also update next PM date if frequency available
+  if (item.PPM_Freq_Months) {
+    const nextPMEl = document.getElementById('jf-nextpm');
+    if (nextPMEl && !nextPMEl.value) {
+      const nextDate = new Date();
+      nextDate.setMonth(nextDate.getMonth() + Number(item.PPM_Freq_Months));
+      nextPMEl.value = nextDate.toISOString().slice(0,10);
+    }
+  }
+
+  // Also set nature of work if PPM
+  if (item.PPM_Status === 'Overdue' || item.PPM_Status === 'Due Soon') {
+    const natureEl = document.getElementById('jf-nature');
+    if (natureEl && !natureEl.value) natureEl.value = 'Preventive Maintenance';
+    const freqEl = document.getElementById('jf-freq');
+    if (freqEl && !freqEl.value && item.PPM_Freq_Months) {
+      const freqMap = {1:'Weekly',3:'Monthly',6:'Quarterly',12:'Annually',24:'Annually'};
+      const closest = Object.entries(freqMap).sort((a,b)=>Math.abs(a[0]-item.PPM_Freq_Months)-Math.abs(b[0]-item.PPM_Freq_Months))[0];
+      freqEl.value = closest ? closest[1] : '';
+    }
+  }
+
+  // Show linked confirmation
+  const linkedDiv  = document.getElementById('jf-inv-linked');
+  const linkedText = document.getElementById('jf-inv-linked-text');
+  if (linkedDiv && linkedText) {
+    linkedText.textContent = 'Linked to ' + item.Asset_ID + ' — ' + (item.Equipment_Type||'Equipment') + ' (' + (item.Department||'') + ')';
+    linkedDiv.style.display = 'flex';
+  }
+
+  // Clear and hide search
+  const searchEl   = document.getElementById('jf-inv-search');
+  const dropdownEl = document.getElementById('jf-inv-dropdown');
+  if (searchEl)   searchEl.value = '';
+  if (dropdownEl) dropdownEl.style.display = 'none';
+
+  showToast('Equipment details auto-filled from inventory!', 'success');
+}
+
+function clearInventoryLink() {
+  const fields = ['jf-manufacturer','jf-model','jf-serial','jf-asset','jf-location','jf-lastservice'];
+  fields.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  const linkedDiv = document.getElementById('jf-inv-linked');
+  if (linkedDiv) linkedDiv.style.display = 'none';
+}
+
+// Search inventory for new request form (ward user)
+function searchInventoryForRequest(query) {
+  const dropdown = document.getElementById('req-inv-dropdown');
+  if (!dropdown) return;
+  if (!query || query.length < 2) {
+    dropdown.style.display = 'none';
+    return;
+  }
+
+  const eq = loadEquipment();
+  const q  = query.toLowerCase();
+  const matches = eq.filter(e =>
+    (e.Equipment_Type && e.Equipment_Type.toLowerCase().includes(q)) ||
+    (e.Asset_ID       && e.Asset_ID.toLowerCase().includes(q)) ||
+    (e.Manufacturer   && e.Manufacturer.toLowerCase().includes(q)) ||
+    (e.Department     && e.Department.toLowerCase().includes(q))
+  ).slice(0, 8);
+
+  if (!matches.length) {
+    dropdown.style.display = 'none';
+    return;
+  }
+
+  dropdown.innerHTML = matches.map(e => `
+    <div onclick="selectEquipmentForRequest('${e.Asset_ID}')"
+      style="padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--border);transition:background 0.1s"
+      onmouseover="this.style.background='var(--light-blue)'"
+      onmouseout="this.style.background='#fff'">
+      <div style="font-size:12px;font-weight:600;color:var(--navy)">${e.Equipment_Type||'Unknown'}</div>
+      <div style="font-size:10px;color:var(--text-muted)">${e.Asset_ID} · ${e.Department||''} ${e.Manufacturer?'· '+e.Manufacturer:''}</div>
+    </div>`).join('');
+  dropdown.style.display = 'block';
+
+  setTimeout(() => {
+    document.addEventListener('click', function closeReqDropdown(e) {
+      if (!dropdown.contains(e.target)) {
+        dropdown.style.display = 'none';
+        document.removeEventListener('click', closeReqDropdown);
+      }
+    });
+  }, 100);
+}
+
+function selectEquipmentForRequest(assetId) {
+  const eq   = loadEquipment();
+  const item = eq.find(e => e.Asset_ID === assetId);
+  if (!item) return;
+
+  const equipEl = document.getElementById('f-equip');
+  if (equipEl) equipEl.value = (item.Equipment_Type||'') + ' (' + item.Asset_ID + ')';
+
+  // Also auto-fill dept if empty
+  const deptEl = document.getElementById('f-dept');
+  if (deptEl && !deptEl.value && item.Department) deptEl.value = item.Department;
+
+  const dropdown = document.getElementById('req-inv-dropdown');
+  if (dropdown) dropdown.style.display = 'none';
+}
+
+// Update inventory PPM dates after job completion
+function updateInventoryAfterJob(req) {
+  if (!req.asset) return;
+  const eq  = loadEquipment();
+  const idx = eq.findIndex(e => e.Asset_ID === req.asset);
+  if (idx < 0) return;
+
+  // Update last PPM date
+  if (req.completedDate) {
+    eq[idx].Last_PPM_Date = req.completedDate;
+  }
+  // Update next PPM date
+  if (req.nextPM) {
+    eq[idx].Next_Due_Date = req.nextPM;
+    eq[idx].PPM_Status    = 'Not Due';
+  }
+  // Update equipment status if condemned
+  if (req.status === 'condemned') {
+    eq[idx].Equipment_Status = 'Retired';
+  }
+
+  saveEquipment(eq);
+  console.log('Inventory updated for asset:', req.asset);
+}
+
+
+// ══════════════════════════════════════════
+// PIN SYNC VIA SUPABASE
+// ══════════════════════════════════════════
+
+// Load PINs from Supabase (falls back to localStorage)
+async function loadPinsAsync() {
+  const sb = getSupabase();
+  if (!sb) return loadPins();
+  try {
+    const { data, error } = await sb
+      .from('bm_settings')
+      .select('value')
+      .eq('key', 'pins')
+      .single();
+    if (error) throw error;
+    if (data && data.value) {
+      const pins = JSON.parse(data.value);
+      savePins(pins); // keep local in sync
+      return pins;
+    }
+  } catch(e) {
+    console.warn('Could not load PINs from Supabase:', e);
+  }
+  return loadPins();
+}
+
+// Save PINs to Supabase + localStorage
+async function savePinsAsync(pins) {
+  savePins(pins); // always save locally first
+  const sb = getSupabase();
+  if (!sb) return;
+  try {
+    const { error } = await sb
+      .from('bm_settings')
+      .upsert({ key: 'pins', value: JSON.stringify(pins) }, { onConflict: 'key' });
+    if (error) throw error;
+    console.log('PINs synced to Supabase');
+  } catch(e) {
+    console.warn('Could not sync PINs to Supabase:', e);
+  }
+}
+
+// Save staff (with individual PINs) to Supabase
+async function saveStaffPinsAsync(staffList) {
+  saveStaff(staffList); // always local first
+  const sb = getSupabase();
+  if (!sb) return;
+  try {
+    const { error } = await sb
+      .from('bm_staff')
+      .upsert(
+        staffList.map(s => ({
+          id:       s.id,
+          name:     s.name,
+          role:     s.role,
+          email:    s.email   || '',
+          initials: s.initials || getInitials(s.name),
+          active:   s.active  !== false,
+          pin:      s.pin     || '',
+        })),
+        { onConflict: 'id' }
+      );
+    if (error) throw error;
+    console.log('Staff PINs synced to Supabase');
+  } catch(e) {
+    console.warn('Could not sync staff PINs to Supabase:', e);
+  }
+}
+
+// On login, pull latest PINs from Supabase so device is always up to date
+async function syncPinsOnLogin() {
+  if (!isSupabaseEnabled()) return;
+  try {
+    // Sync shared PINs
+    const pins = await loadPinsAsync();
+    savePins(pins);
+
+    // Sync staff (individual PINs)
+    const sb = getSupabase();
+    if (!sb) return;
+    const { data, error } = await sb
+      .from('bm_staff')
+      .select('*');
+    if (error) throw error;
+    if (data && data.length > 0) {
+      const staff = data.map(s => ({
+        id:       s.id,
+        name:     s.name,
+        role:     s.role,
+        email:    s.email   || '',
+        initials: s.initials || getInitials(s.name),
+        active:   s.active  !== false,
+        pin:      s.pin     || '',
+      }));
+      saveStaff(staff);
+      console.log('Staff PINs synced from Supabase on login');
+    }
+  } catch(e) {
+    console.warn('PIN sync on login failed (non-fatal):', e);
+  }
 }
 
 </script>
