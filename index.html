@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>  
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Biomedical Work Request — General Hospital Grenada</title>
@@ -386,6 +386,10 @@
         <span style="width:6px;height:6px;border-radius:50%;background:#00AEEF;animation:pulse-blue 1s infinite"></span>
         Live update
       </div>
+      <div id="offline-indicator" style="display:none;align-items:center;gap:5px;background:rgba(163,45,45,0.2);border:1px solid rgba(163,45,45,0.4);border-radius:20px;padding:2px 10px;font-size:10px;color:#A32D2D">
+        <span style="width:6px;height:6px;border-radius:50%;background:#A32D2D"></span>
+        Local only
+      </div>
     </div>
     <div class="topbar-right">
       <button onclick="installApp()" title="Install app on your device" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.4);color:#fff;padding:5px 12px;border-radius:var(--radius);cursor:pointer;font-size:11px;display:flex;align-items:center;gap:5px">
@@ -576,7 +580,7 @@ function loadPins() {
     const p = localStorage.getItem('bm_pins');
     if (p) return JSON.parse(p);
   } catch(e) {}
-  return { user:'1234', tech:'1313', super:'5253' };
+  return { user:'1234', tech:'1313', super:'2019' };
 }
 
 function savePins(pins) {
@@ -920,7 +924,7 @@ function reqCard(r) {
       <select class="assign-select" id="asel-${r.id}" onclick="event.stopPropagation()">
         <option value="">Assign to technician...</option>
         ${getTechList().map(t=>`<option value="${t.name}" ${r.tech===t.name?'selected':''}>${t.name}</option>`).join('')}
-        <option value="DHS (Ag.) — Supervisor" ${r.tech==='DHS (Ag.) — Supervisor'?'selected':''}>DHS (Ag.) — Supervisor</option>
+        <option value="K. Baptiste — Senior Biomedical Engineer" ${r.tech==='K. Baptiste — Senior Biomedical Engineer'?'selected':''}>K. Baptiste — Senior Biomedical Engineer</option>
       </select>
       <button class="assign-btn" onclick="event.stopPropagation();assignJob('${r.id}',document.getElementById('asel-${r.id}').value)">
         <i class="ti ti-check"></i> Assign
@@ -1018,7 +1022,15 @@ function renderList(mode) {
   const titles = { my:'My requests', tech:'My job queue', all:'All requests' };
 
   if (mode === 'my') {
-    reqs = REQUESTS.filter(r => r.requester === currentUserName || r.requester === 'Ward Staff').slice(0,20);
+    // Show ALL requests submitted in this session (ward users)
+    // Match by requester name OR show all if ward role
+    reqs = role === 'user'
+      ? REQUESTS.filter(r =>
+          !r.requester ||
+          r.requester === 'Ward Staff' ||
+          r.requester === currentUserName
+        ).slice(0, 50)
+      : REQUESTS.filter(r => r.requester === currentUserName).slice(0, 50);
   }
   if (mode === 'tech') {
     // Jobs assigned to this tech + all unassigned open jobs
@@ -1088,7 +1100,7 @@ function showDetail(id) {
     <select class="assign-select" id="detail-assign-sel" style="max-width:200px">
       <option value="">Reassign to...</option>
       ${getTechList().map(t=>`<option value="${t.name}" ${r.tech===t.name?'selected':''}>${t.name}</option>`).join('')}
-      <option value="DHS (Ag.) — Supervisor">DHS (Ag.) — Supervisor</option>
+      <option value="K. Baptiste — Senior Biomedical Engineer">K. Baptiste — Senior Biomedical Engineer</option>
     </select>
     <button class="assign-btn" onclick="assignJob('${r.id}',document.getElementById('detail-assign-sel').value);showDetail('${r.id}')">
       <i class="ti ti-refresh"></i> Reassign
@@ -1185,7 +1197,7 @@ function renderForm() {
   <div class="form-section">
     <div class="section-hdr"><span class="section-hdr-badge">1</span><span class="section-hdr-title">Request Information</span></div>
     <div class="form-grid g3">
-      <div class="f-group"><label>Request No.</label><input type="text" value="${getNextId()}" readonly></div>
+      <div class="f-group"><label>Request No.</label><input type="text" id="f-reqno" value="${getNextId()}" readonly></div>
       <div class="f-group"><label>Date of request</label><input type="text" id="f-date" readonly style="background:var(--surface);color:var(--text-muted);cursor:not-allowed" value="${new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}"></div>
       <div class="f-group"><label>Time of request</label><input type="text" id="f-time" readonly style="background:var(--surface);color:var(--text-muted);cursor:not-allowed" value="${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}"></div>
     </div>
@@ -1261,7 +1273,7 @@ function renderForm() {
     <div class="form-grid g2">
       <div class="f-group"><label>Assigned technician / engineer</label>
         ${role==='super'
-          ? `<select id="f-tech" onchange="handleTechSelect(this)"><option value="">Select technician...</option>${getTechList().map(t=>`<option value="${t.name}">${t.name}</option>`).join('')}<option value="">DHS (Ag.) — Supervisor</option><option value="__new__">+ Add new technician...</option></select>
+          ? `<select id="f-tech" onchange="handleTechSelect(this)"><option value="">Select technician...</option>${getTechList().map(t=>`<option value="${t.name}">${t.name}</option>`).join('')}<option value="">K. Baptiste — Senior Biomedical Engineer</option><option value="__new__">+ Add new technician...</option></select>
              <div id="new-tech-box" style="display:none;margin-top:6px">
                <input type="text" id="new-tech-name" placeholder="Full name of new technician" style="width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;margin-bottom:6px">
                <button class="btn btn-secondary btn-sm" onclick="addNewTechnician()" style="width:100%"><i class="ti ti-user-plus"></i> Add technician</button>
@@ -1428,7 +1440,8 @@ function saveDraft() {
 
 function submitRequest() {
   // Gather form values
-  const equip    = document.getElementById('f-equip')    ? document.getElementById('f-equip').value.trim()    : '';
+  const equip     = document.getElementById('f-equip')     ? document.getElementById('f-equip').value.trim()     : '';
+  const requesterName = (document.getElementById('f-requester')||{value:''}).value.trim() || currentUserName || 'Ward Staff';
   const deptRaw  = document.getElementById('f-dept')     ? document.getElementById('f-dept').value             : '';
   const deptOther= document.getElementById('f-dept-other')? document.getElementById('f-dept-other').value.trim(): '';
   const dept     = (deptRaw === 'OTHER_GH' || deptRaw === 'OTHER_FACILITY') ? (deptOther || deptRaw) : deptRaw;
@@ -3776,8 +3789,8 @@ function togglePinVisibility(inputId, iconId) {
 }
 
 function resetPinsToDefault() {
-  if (!confirm('Reset all PINs to factory defaults?\nUser: 1234  |  Tech: 1313  |  Supervisor: 5253\n\nThis cannot be undone.')) return;
-  const defaultPins = { user:'1234', tech:'1313', super:'5253' };
+  if (!confirm('Reset all PINs to factory defaults?\nUser: 1234  |  Tech: 1313  |  Supervisor: 2019\n\nThis cannot be undone.')) return;
+  const defaultPins = { user:'1234', tech:'1313', super:'2019' };
   savePinsAsync(defaultPins);
   showToast('PINs reset to default values.', '');
   goView('Staff');
@@ -3872,17 +3885,20 @@ function showInstallInstructions(platform) {
         </div>
       </div>` : `
       <div style="display:flex;flex-direction:column;gap:12px;font-size:14px">
+        <div style="background:#FFF8E6;border:1px solid #F0C060;border-radius:8px;padding:10px 14px;font-size:12px;color:#8A5200">
+          <strong>On Chrome desktop:</strong> Look for the <strong>install icon ⊕</strong> in the address bar (far right). Click it → Install.
+        </div>
         <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--surface);border-radius:8px">
           <div style="width:32px;height:32px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;flex-shrink:0">1</div>
-          <div>Tap the <strong>three dots menu</strong> (⋮) in your browser</div>
+          <div><strong>Android Chrome:</strong> Tap the <strong>three dots menu</strong> (⋮) top right → <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong></div>
         </div>
         <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--surface);border-radius:8px">
           <div style="width:32px;height:32px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;flex-shrink:0">2</div>
-          <div>Tap <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong></div>
+          <div><strong>Desktop Chrome/Edge:</strong> Click the <strong>install icon ⊕</strong> in the address bar → click <strong>"Install"</strong></div>
         </div>
         <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--surface);border-radius:8px">
           <div style="width:32px;height:32px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;flex-shrink:0">3</div>
-          <div>Tap <strong>"Install"</strong> or <strong>"Add"</strong> to confirm</div>
+          <div><strong>If no install icon:</strong> Three dots (⋮) → <strong>Cast, save and share</strong> → <strong>Install page as app</strong></div>
         </div>
       </div>`}
     </div>
