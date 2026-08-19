@@ -4035,25 +4035,45 @@ async function migrateToSupabase() {
     const localReqs  = loadRequests();
     const localStaff = loadStaff();
 
-    if (localReqs.length > 0) {
-      const { error: reqErr } = await tempClient
+    // De-duplicate by id to prevent ON CONFLICT errors
+    const uniqueReqs = Object.values(
+      localReqs.reduce(function(acc, r) { acc[r.id] = r; return acc; }, {})
+    );
+    const uniqueStaff = Object.values(
+      localStaff.reduce(function(acc, s) { acc[s.id] = s; return acc; }, {})
+    );
+
+    var reqCount = 0;
+    var batchSize = 25;
+
+    // Upload requests in small batches
+    for (var i = 0; i < uniqueReqs.length; i += batchSize) {
+      var batch = uniqueReqs.slice(i, i + batchSize);
+      var batchResult = await tempClient
         .from('bm_requests')
-        .upsert(localReqs.map(requestToDb), { onConflict: 'id' });
-      if (reqErr) throw reqErr;
+        .upsert(batch.map(requestToDb), { onConflict: 'id' });
+      if (batchResult.error) throw batchResult.error;
+      reqCount += batch.length;
+      if (result) result.innerHTML = '<span style="color:var(--blue)"><i class="ti ti-loader"></i> Uploading... ' + reqCount + ' / ' + uniqueReqs.length + ' requests</span>';
     }
 
-    if (localStaff.length > 0) {
-      const { error: staffErr } = await tempClient
+    // Upload staff
+    if (uniqueStaff.length > 0) {
+      var staffResult = await tempClient
         .from('bm_staff')
-        .upsert(localStaff.map(s => ({
-          id: s.id, name: s.name, role: s.role,
-          email: s.email||'', initials: s.initials||getInitials(s.name),
-          active: s.active !== false
-        })), { onConflict: 'id' });
-      if (staffErr) throw staffErr;
+        .upsert(uniqueStaff.map(function(s) { return {
+          id:       s.id,
+          name:     s.name,
+          role:     s.role,
+          email:    s.email    || '',
+          initials: s.initials || getInitials(s.name),
+          active:   s.active   !== false,
+          pin:      s.pin      || '',
+        }; }), { onConflict: 'id' });
+      if (staffResult.error) throw staffResult.error;
     }
 
-    if (result) result.innerHTML = `<span style="color:var(--green)"><i class="ti ti-circle-check"></i> Migration complete! ${localReqs.length} requests and ${localStaff.length} staff members uploaded to Supabase.</span>`;
+    if (result) result.innerHTML = '<span style="color:var(--green)"><i class="ti ti-circle-check"></i> Migration complete! ' + reqCount + ' requests and ' + uniqueStaff.length + ' staff uploaded to Supabase.</span>';
     showToast('Migration complete!', 'success');
   } catch(e) {
     if (result) result.innerHTML = '<span style="color:var(--red)"><i class="ti ti-x"></i> Migration failed: ' + (e.message||e) + '</span>';
