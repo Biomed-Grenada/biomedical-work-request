@@ -555,13 +555,23 @@ const DEFAULT_STAFF = [
   { id:'tech-3', name:'D. Alexander',  role:'tech',  email:'dwightalexander4@gmail.com',   initials:'DA', active:true, pin:'4403' },
   { id:'tech-4', name:'D. Nimrod',     role:'tech',  email:'dennon.nimrod@hotmail.com',    initials:'DN', active:true, pin:'5504' },
   { id:'tech-5', name:'K. Baptiste',   role:'tech',  email:'k.baptiste@health.gov.gd',     initials:'KB', active:true, pin:'6605' },
-  { id:'super-1',name:'K. Baptiste',   role:'super', email:'Biomedical@health.gov.gd',     initials:'KB', active:true, pin:'5253' },
+  { id:'super-1',name:'K. Baptiste', role:'super', email:'Biomedical@health.gov.gd',     initials:'KB', active:true, pin:'5253' },
 ];
 
 function loadStaff() {
   try {
     const s = localStorage.getItem('bm_staff');
-    if (s) return JSON.parse(s);
+    if (s) {
+      const staff = JSON.parse(s);
+      let changed = false;
+      staff.forEach(m => {
+        if (m.name && (m.name.includes('DHS') || m.name === 'DHS (Ag.)')) {
+          m.name = 'K. Baptiste'; m.initials = 'KB'; changed = true;
+        }
+      });
+      if (changed) localStorage.setItem('bm_staff', JSON.stringify(staff));
+      return staff;
+    }
   } catch(e) {}
   localStorage.setItem('bm_staff', JSON.stringify(DEFAULT_STAFF));
   return DEFAULT_STAFF;
@@ -814,6 +824,17 @@ function backToLogin() {
 }
 
 function launchApp() {
+  // Fix any cached DHS(Ag.) name in localStorage
+  try {
+    const staff = loadStaff();
+    let changed = false;
+    staff.forEach(s => {
+      if (s.name === 'DHS (Ag.)') { s.name = 'K. Baptiste'; s.initials = 'KB'; changed = true; }
+      if (s.name === 'DHS (Ag.) — Supervisor') { s.name = 'K. Baptiste'; s.initials = 'KB'; changed = true; }
+    });
+    if (changed) saveStaff(staff);
+  } catch(e) {}
+
   document.getElementById('login-page').style.display = 'none';
   const app = document.getElementById('app');
   app.style.display = 'block';
@@ -894,7 +915,7 @@ function goView(v) {
   if (btn) btn.classList.add('active');
   const m = document.getElementById('app-main');
   if (v === 'Dashboard')    m.innerHTML = renderDashboard();
-  else if (v === 'New Request')  m.innerHTML = renderForm();
+  else if (v === 'New Request')  { m.innerHTML = renderForm(); setTimeout(checkPendingTranscription,300); }
   else if (v === 'My Requests')  m.innerHTML = renderList('my');
   else if (v === 'My Jobs')      m.innerHTML = renderList('tech');
   else if (v === 'All Requests') m.innerHTML = renderList('all');
@@ -1839,9 +1860,14 @@ function openJobForm(id) {
     <div class="tap-sign-box">
       <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;margin-bottom:10px">K. Baptiste — Senior Biomedical Engineer</div>
       <div id="ts-hod-pending">
+        ${role === 'super' ? `
         <button class="btn btn-primary" onclick="tapToSign('hod','K. Baptiste','${sigTime}')" style="width:100%;padding:12px;font-size:13px">
-          <i class="ti ti-fingerprint" style="font-size:18px"></i> Supervisor taps here to validate
-        </button>
+          <i class="ti ti-fingerprint" style="font-size:18px"></i> Tap here to validate this job
+        </button>` : `
+        <div style="padding:12px;background:var(--surface);border-radius:var(--radius);border:1px dashed var(--border);text-align:center;color:var(--text-muted);font-size:13px">
+          <i class="ti ti-lock" style="font-size:18px;display:block;margin-bottom:6px"></i>
+          Awaiting validation by Senior Biomedical Engineer
+        </div>`}
       </div>
       <div id="ts-hod-signed" style="display:none"></div>
     </div>
@@ -3260,8 +3286,39 @@ function sendEmergencyAlert() {
   // Add to notifications
   addNotification('🚨 EMERGENCY ALERT — ' + dept, body, 'emergency', emReq.id);
 
+  // Pre-fill New Request form with transcribed data
+  try {
+    sessionStorage.setItem('em_prefill', JSON.stringify({
+      equip: equip,
+      dept:  dept,
+      desc:  desc || (equip + ' — emergency reported by ' + (name||'ward staff')),
+      requester: name || '',
+    }));
+  } catch(e) {}
+
   closeEmergencyModal();
-  showToast('Emergency alert sent to Biomedical team!', 'success');
+  showToast('Emergency alert sent! Opening new request form...', 'success');
+
+  // Navigate to new request form with pre-filled data
+  setTimeout(() => {
+    goView('New Request');
+    setTimeout(() => {
+      try {
+        const pf = JSON.parse(sessionStorage.getItem('em_prefill') || 'null');
+        if (!pf) return;
+        const equipEl = document.getElementById('f-equip');
+        const deptEl  = document.getElementById('f-dept');
+        const descEl  = document.getElementById('f-desc');
+        const reqEl   = document.getElementById('f-requester');
+        if (equipEl) equipEl.value = pf.equip;
+        if (deptEl)  deptEl.value  = pf.dept;
+        if (descEl)  descEl.value  = pf.desc;
+        if (reqEl && pf.requester)  reqEl.value = pf.requester;
+        sessionStorage.removeItem('em_prefill');
+        showToast('Form pre-filled from voice recording!', 'success');
+      } catch(e) {}
+    }, 600);
+  }, 1000);
 
   // Flash screen red briefly
   const flash = document.createElement('div');
