@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> 
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Biomedical Work Request — General Hospital Grenada</title>
@@ -318,7 +318,15 @@
   <\/script>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>
+    // Fallback: if unpkg failed, try jsdelivr
+    if (!window.supabase) {
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
+      document.head.appendChild(s);
+    }
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
@@ -1373,13 +1381,9 @@ function renderForm() {
   </div>
   ${section1}
   ${section2}
-  ${sectionPM}
-  ${section3}
-  ${section4}
   <div class="form-actions">
-    <button class="btn btn-secondary" onclick="goView(role==='tech'?'My Jobs':'All Requests')">Cancel</button>
-    <button class="btn btn-secondary" onclick="saveDraft()"><i class="ti ti-device-floppy"></i>Save draft</button>
-    <button class="btn btn-primary" onclick="submitRequest()"><i class="ti ti-send"></i>Submit &amp; save</button>
+    <button class="btn btn-secondary" onclick="goView(role==='user'?'My Requests':role==='tech'?'My Jobs':'All Requests')">Cancel</button>
+    <button class="btn btn-primary" onclick="submitRequest()"><i class="ti ti-send"></i>Submit request</button>
   </div>
 `;
 }
@@ -1914,12 +1918,21 @@ function saveSupabaseConfig(cfg) {
   try { localStorage.setItem(SB_CONFIG_KEY, JSON.stringify(cfg)); } catch(e) {}
 }
 
+function getSupabaseLib() {
+  // Try multiple ways to find the Supabase SDK
+  if (window.supabase && window.supabase.createClient) return window.supabase;
+  if (typeof supabase !== 'undefined' && supabase.createClient) return supabase;
+  // Try the module export style
+  if (window.supabaseJs && window.supabaseJs.createClient) return window.supabaseJs;
+  return null;
+}
+
 function getSupabase() {
   if (_supabase) return _supabase;
   const cfg = loadSupabaseConfig();
   if (!cfg.enabled || !cfg.url || !cfg.anonKey) return null;
-  const sbLib = window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
-  if (!sbLib || !sbLib.createClient) return null;
+  const sbLib = getSupabaseLib();
+  if (!sbLib) return null;
   // Wait for SDK to load
   if (!window.supabase || !window.supabase.createClient) {
         return null;
@@ -2785,7 +2798,11 @@ function renderStaffManagement() {
     <div style="background:var(--light-blue);border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--blue);line-height:1.6">
       <i class="ti ti-info-circle" style="margin-right:6px"></i>
       Connect Supabase so <strong>all devices share the same requests in real time</strong> — free for up to 50,000 rows/month.
-      See the setup guide below.
+    </div>
+    <div id="sdk-status" style="margin-bottom:10px;font-size:12px;padding:8px 12px;border-radius:6px;background:${getSupabaseLib()?'var(--green-bg)':'#FFF8E6'};border:1px solid ${getSupabaseLib()?'var(--green)':'#F0C060'};color:${getSupabaseLib()?'var(--green)':'#8A5200'};display:flex;align-items:center;gap:8px">
+      <i class="ti ti-${getSupabaseLib()?'circle-check':'alert-circle'}"></i>
+      ${getSupabaseLib() ? 'Supabase SDK loaded ✅' : 'SDK loading... if this persists, hard-refresh the page (Ctrl+Shift+R)'}
+      ${!getSupabaseLib() ? '<button onclick="window.location.reload()" style="margin-left:auto;background:var(--navy);color:#fff;border:none;padding:4px 10px;border-radius:5px;font-size:11px;cursor:pointer"><i class=\"ti ti-refresh\"></i> Refresh page</button>' : ''}
     </div>
     <div class="form-grid g2">
       <div class="f-group"><label>Supabase Project URL</label>
@@ -3976,9 +3993,9 @@ async function testSupabase() {
   if (result) result.innerHTML = '<span style="color:var(--blue)"><i class="ti ti-loader"></i> Testing connection...</span>';
 
   try {
-    const sbLib = window.supabase || window.supabaseJs || (typeof supabase !== 'undefined' ? supabase : null);
-    if (!sbLib || !sbLib.createClient) {
-      if (result) result.innerHTML = '<span style="color:var(--red)"><i class="ti ti-x"></i> Supabase SDK not loaded. Please refresh the page and try again.</span>';
+    const sbLib = getSupabaseLib();
+    if (!sbLib) {
+      if (result) result.innerHTML = '<span style="color:var(--red)"><i class="ti ti-x"></i> Supabase SDK not loaded. Please wait a moment and try again.</span>';
       return;
     }
     const tempClient = sbLib.createClient(url, key);
@@ -4008,10 +4025,10 @@ async function migrateToSupabase() {
   if (result) result.innerHTML = '<span style="color:var(--blue)"><i class="ti ti-loader"></i> Migrating data...</span>';
 
   try {
-    // Check SDK loaded - try multiple ways
-    const sbLib = window.supabase || window.supabaseJs || (typeof supabase !== 'undefined' ? supabase : null);
-    if (!sbLib || !sbLib.createClient) {
-      if (result) result.innerHTML = '<span style="color:var(--red)"><i class="ti ti-x"></i> Supabase SDK not loaded. Please refresh the page and try again.</span>';
+    // Check SDK loaded
+    const sbLib = getSupabaseLib();
+    if (!sbLib) {
+      if (result) result.innerHTML = '<span style="color:var(--red)"><i class="ti ti-x"></i> Supabase SDK not loaded. Please wait a moment and try again, or hard-refresh the page (Ctrl+Shift+R).</span>';
       return;
     }
     const tempClient = sbLib.createClient(url, key);
