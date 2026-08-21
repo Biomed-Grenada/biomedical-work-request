@@ -1213,201 +1213,109 @@ function showDetail(id) {
 
 // ── New request form ──
 function renderForm() {
-  const pmRows = PM_CHECKLIST.map(sec => `
-    <div class="pm-section-hdr">${sec.section}</div>
-    ${sec.items.map(item=>`
-    <div class="pm-row">
-      <input type="checkbox">
-      <div class="pm-row-label">${item}</div>
-      <input type="text" placeholder="Remarks / readings">
-    </div>`).join('')}`).join('');
+  const reqId = getNextId();
+  const now   = new Date();
+  const dateStr = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  const timeStr = now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  const userName = currentUserName || (role==='user'?'Ward Staff':role==='tech'?currentUserName:'K. Baptiste');
 
-  // ── SECTION 1 — always visible to all roles ──
-  const section1 = `
+  return `
+  <div class="page-header">
+    <div><div class="page-title">New work request</div>
+    <div class="page-sub">Fields marked * are required</div></div>
+  </div>
+
+  <!-- SECTION 1 -->
   <div class="form-section">
-    <div class="section-hdr"><span class="section-hdr-badge">1</span><span class="section-hdr-title">Request Information</span></div>
+    <div class="section-hdr">
+      <span class="section-hdr-badge" style="background:var(--accent)">1</span>
+      <span class="section-hdr-title">Request information</span>
+    </div>
     <div class="form-grid g3">
-      <div class="f-group"><label>Request No.</label><input type="text" id="f-reqno" value="${getNextId()}" readonly></div>
-      <div class="f-group"><label>Date of request</label><input type="text" id="f-date" readonly style="background:var(--surface);color:var(--text-muted);cursor:not-allowed" value="${new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}"></div>
-      <div class="f-group"><label>Time of request</label><input type="text" id="f-time" readonly style="background:var(--surface);color:var(--text-muted);cursor:not-allowed" value="${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}"></div>
+      <div class="f-group">
+        <label>Request No.</label>
+        <input type="text" id="f-reqno" value="${reqId}" readonly style="background:var(--surface);color:var(--text-muted);font-family:monospace">
+      </div>
+      <div class="f-group">
+        <label>Date</label>
+        <input type="text" id="f-date" value="${dateStr}" readonly style="background:var(--surface);color:var(--text-muted)">
+      </div>
+      <div class="f-group">
+        <label>Time</label>
+        <input type="text" id="f-time" value="${timeStr}" readonly style="background:var(--surface);color:var(--text-muted)">
+      </div>
     </div>
     <div class="form-grid g2">
-      <div class="f-group"><label>Requester name *</label><input type="text" id="f-requester" value="${role==='user'?'Ward Staff':role==='tech'?ROLES.tech.name:ROLES.super.name}" placeholder="Full name"></div>
-      <div class="f-group"><label>Department / Ward *</label>
-        <select id="f-dept" onchange="onDeptChange(this)">
-          <option value="">Select department...</option>
-          <optgroup label="General Hospital, Grenada">
-            ${['MMW — Male Medical Ward','FMW — Female Medical Ward','MSW — Male Surgical Ward','FSW — Female Surgical Ward','OR — Operating Room','ICU — Intensive Care Unit','NICU — Neonatal ICU','A&E — Accident & Emergency','PEDS — Paediatrics','OBS — Obstetrics','GYNAE — Gynaecology','LAB — Laboratory','PAT — Pathology','ONC — Oncology','OPC — Outpatient Clinic','EYE WARD','XRAY — Radiology','PHARM — Pharmacy'].map(d=>`<option value="${d}">${d}</option>`).join('')}
-          </optgroup>
-          <optgroup label="Other">
-            <option value="OTHER_GH">Other at GH (specify below)</option>
-            <option value="OTHER_FACILITY">Other facility (specify below)</option>
-          </optgroup>
-        </select>
+      <div class="f-group">
+        <label>Your name *</label>
+        <input type="text" id="f-requester" placeholder="Enter your full name" value="${userName}">
+      </div>
+      <div class="f-group">
+        <label>Contact / extension</label>
+        <input type="text" id="f-contact" placeholder="Phone or extension number">
       </div>
     </div>
-    <div class="form-grid g1" id="dept-other-row" style="display:none">
-      <div class="f-group"><label>Please specify department / facility *</label>
-        <input type="text" id="f-dept-other" placeholder="Enter department or facility name">
-      </div>
+    <div class="f-group">
+      <label>Department / ward *</label>
+      <select id="f-dept">
+        <option value="">Select department...</option>
+        <option value="MMW — Male Medical Ward">MMW — Male Medical Ward</option><option value="FMW — Female Medical Ward">FMW — Female Medical Ward</option><option value="MSW — Male Surgical Ward">MSW — Male Surgical Ward</option><option value="FSW — Female Surgical Ward">FSW — Female Surgical Ward</option><option value="OR — Operating Room">OR — Operating Room</option><option value="ICU — Intensive Care Unit">ICU — Intensive Care Unit</option><option value="NICU — Neonatal ICU">NICU — Neonatal ICU</option><option value="A&E — Accident & Emergency">A&E — Accident & Emergency</option><option value="PEDS — Paediatrics">PEDS — Paediatrics</option><option value="OBS — Obstetrics">OBS — Obstetrics</option><option value="GYNAE — Gynaecology">GYNAE — Gynaecology</option><option value="LAB — Laboratory">LAB — Laboratory</option><option value="PAT — Pathology">PAT — Pathology</option><option value="ONC — Oncology">ONC — Oncology</option><option value="OPC — Out Patient Clinic">OPC — Out Patient Clinic</option><option value="EYE WARD">EYE WARD</option><option value="XRAY — Radiology">XRAY — Radiology</option><option value="PHARM — Pharmacy">PHARM — Pharmacy</option><option value="Other at GH">Other at GH</option><option value="Other facility">Other facility</option>
+      </select>
     </div>
-    <div class="form-grid g1">
-      <div class="f-group"><label>Service type *</label>
-        <div class="chk-grid" style="grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
-          <label class="chk-label" style="border:1.5px solid var(--border);padding:10px 12px;border-radius:var(--radius);cursor:pointer" id="lbl-dropoff">
-            <input type="radio" name="service-type" id="svc-dropoff" value="drop-off" onchange="selectServiceType(this)" style="width:15px;height:15px;accent-color:var(--navy)">
-            <div>
-              <div style="font-weight:600;font-size:12px">Drop-off equipment</div>
-              <div style="font-size:11px;color:var(--text-muted)">Bring equipment to Biomedical Dept.</div>
-            </div>
-          </label>
-          <label class="chk-label" style="border:1.5px solid var(--border);padding:10px 12px;border-radius:var(--radius);cursor:pointer" id="lbl-inperson">
-            <input type="radio" name="service-type" id="svc-inperson" value="in-person" onchange="selectServiceType(this)" style="width:15px;height:15px;accent-color:var(--navy)">
-            <div>
-              <div style="font-weight:600;font-size:12px">In-person service</div>
-              <div style="font-size:11px;color:var(--text-muted)">Technician comes to your ward</div>
-            </div>
-          </label>
-        </div>
-      </div>
-    </div>
-    <div class="form-grid g1">
-      <div class="f-group"><label>Equipment name *</label><input type="text" id="f-equip" placeholder="e.g. Vital Signs Monitor, Infusion Pump"></div>
-    </div>
-    <div class="form-grid g1">
-      <div class="f-group"><label>Description of request or problem *</label><textarea id="f-desc" placeholder="Describe the issue or work required in detail..."></textarea></div>
-    </div>
-  </div>`;
+  </div>
 
-  // ── WARD USER: only Section 1 + submit ──
-  if (role === 'user') {
-    return `
-    <div class="page-header">
-      <div><div class="page-title">New work request</div><div class="page-sub">Complete all required fields and submit</div></div>
-    </div>
-    ${section1}
-    <div style="background:var(--light-blue);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px">
-      <i class="ti ti-info-circle" style="font-size:20px;color:var(--blue);flex-shrink:0"></i>
-      <div style="font-size:12px;color:var(--blue)">Your request will be submitted to the Biomedical Engineering team. A technician will be assigned and will complete the remaining sections when work is carried out.</div>
-    </div>
-    <div class="form-actions">
-      <button class="btn btn-secondary" onclick="goView('My Requests')">Cancel</button>
-      <button class="btn btn-primary" onclick="submitRequest()"><i class="ti ti-send"></i>Submit request</button>
-    </div>`;
-  }
-
-  // ── SECTION 2 — Technician / Supervisor only ──
-  const section2 = `
+  <!-- SECTION 2 -->
   <div class="form-section">
-    <div class="section-hdr"><span class="section-hdr-badge">2</span>
+    <div class="section-hdr">
+      <span class="section-hdr-badge">2</span>
       <span class="section-hdr-title">Equipment & request details</span>
     </div>
     <div style="background:var(--light-blue);border-radius:6px;padding:8px 12px;margin-bottom:14px;font-size:12px;color:var(--blue)">
       <i class="ti ti-info-circle" style="margin-right:4px"></i>
-      Full equipment details and work report will be completed by the assigned technician.
+      Full equipment details will be completed by the assigned technician.
     </div>
-    <div class="f-group" style="margin-bottom:12px">
+    <div class="f-group">
       <label>Equipment / device *</label>
       <div style="position:relative">
-        <input type="text" id="f-equip" placeholder="Type to search inventory or enter manually..."
-          oninput="searchInventoryForRequest(this.value)" autocomplete="off" style="width:100%">
+        <input type="text" id="f-equip"
+          placeholder="Type to search inventory or enter manually..."
+          oninput="searchInventoryForRequest(this.value)"
+          autocomplete="off" style="width:100%">
         <div id="req-inv-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid var(--accent);border-top:none;border-radius:0 0 var(--radius) var(--radius);max-height:200px;overflow-y:auto;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,0.12)"></div>
       </div>
-      <div style="font-size:10px;color:var(--text-muted);margin-top:3px"><i class="ti ti-database" style="font-size:10px"></i> Suggestions from equipment register</div>
     </div>
     <div class="form-grid g2">
-      <div class="f-group"><label>Department / ward *</label>
-        <select id="f-dept"><option value="">Select department...</option><option>MMW</option><option>FMW</option><option>MSW</option><option>FSW</option><option>OR</option><option>ICU</option><option>NICU</option><option>A&E</option><option>PEDS</option><option>OBS</option><option>GYNAE</option><option>LAB</option><option>PAT</option><option>ONC</option><option>OPC</option><option>EYE WARD</option><option>XRAY</option><option>PHARM</option><option>Other at GH</option><option>Other facility</option></select>
-      </div>
-      <div class="f-group"><label>Priority</label>
+      <div class="f-group">
+        <label>Priority</label>
         <select id="f-priority">
           <option value="medium">Medium</option>
-          <option value="high">High</option>
-          <option value="low">Low</option>
+          <option value="high">High — urgent attention needed</option>
+          <option value="low">Low — routine</option>
         </select>
       </div>
-    </div>
-    <div class="f-group"><label>Description of problem / request *</label>
-      <textarea id="f-desc" placeholder="Describe the issue or work needed..." style="min-height:90px"></textarea>
-    </div>
-    <div class="form-grid g2">
-      <div class="f-group"><label>Service type</label>
+      <div class="f-group">
+        <label>Service type</label>
         <select id="f-service-type">
           <option value="">Select...</option>
           <option value="in-person">In-person visit</option>
           <option value="drop-off">Drop-off equipment</option>
         </select>
       </div>
-      <div class="f-group"><label>Frequency of issue</label>
-        <select id="f-freq-issue"><option value="">Select...</option><option>First time</option><option>Recurring</option><option>After repair</option><option>After maintenance</option><option>Unknown</option></select>
-      </div>
     </div>
-  </div>`
-
-
-  const section3 = `
-  <div class="form-section">
-    <div class="section-hdr"><span class="section-hdr-badge">3</span><span class="section-hdr-title">Signatures</span></div>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px">Tap the button to confirm your identity and digitally sign this form. Your name and the date/time will be recorded automatically.</p>
-    <div class="sig-grid g2">
-      <div class="tap-sign-box" id="tsbox-requester">
-        <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:10px">Requested by</div>
-        <div id="ts-requester-pending" style="text-align:center">
-          <button class="btn btn-primary" onclick="tapToSign('requester','${currentUserName || 'Ward Staff'}','${sigTime}')" style="width:100%;padding:14px;font-size:13px">
-            <i class="ti ti-fingerprint" style="font-size:18px"></i> Tap to sign as ${currentUserName || 'Ward Staff'}
-          </button>
-        </div>
-        <div id="ts-requester-signed" style="display:none"></div>
-      </div>
-      <div class="tap-sign-box" id="tsbox-tech">
-        <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:10px">Biomedical Engineer / Technician</div>
-        <div id="ts-tech-pending" style="text-align:center">
-          <button class="btn btn-primary" onclick="tapToSign('tech','${currentUserName}','${sigTime}')" style="width:100%;padding:14px;font-size:13px">
-            <i class="ti ti-fingerprint" style="font-size:18px"></i> Tap to sign as ${currentUserName}
-          </button>
-        </div>
-        <div id="ts-tech-signed" style="display:none"></div>
-      </div>
+    <div class="f-group">
+      <label>Description of problem / request *</label>
+      <textarea id="f-desc" placeholder="Describe the issue or work needed in detail..." style="min-height:100px"></textarea>
     </div>
-  </div>`;
-
-  // ── SECTION 4 — HOD Tap-to-sign ──
-  const section4 = `
-  <div class="form-section" style="border-left:4px solid var(--navy)">
-    <div class="section-hdr"><span class="section-hdr-badge" style="background:#444">4</span><span class="section-hdr-title">Validation by HOD / Supervisor — Office Use Only</span></div>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px">Supervisor taps below to confirm and validate this completed job.</p>
-    <div class="sig-grid g2">
-      <div class="tap-sign-box">
-        <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:10px">HOD / Supervisor</div>
-        <div id="ts-hod-pending" style="text-align:center">
-          <button class="btn btn-primary" onclick="tapToSign('hod','${role==='super'?currentUserName:ROLES.super.name}','${sigTime}')" style="width:100%;padding:14px;font-size:13px">
-            <i class="ti ti-fingerprint" style="font-size:18px"></i> Tap to validate as ${role==='super'?currentUserName:ROLES.super.name}
-          </button>
-        </div>
-        <div id="ts-hod-signed" style="display:none"></div>
-      </div>
-      <div class="tap-sign-box">
-        <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:10px">Date of validation</div>
-        <div style="padding:16px 0;font-size:14px;font-weight:600;color:var(--navy)">${sigTime}</div>
-        <input type="hidden" id="val-date" value="${new Date().toISOString().slice(0,10)}">
-        <input type="hidden" id="val-name" value="${role==='super'?currentUserName:ROLES.super.name}">
-      </div>
-    </div>
-  </div>`;
-
-  // ── TECH / SUPERVISOR: All 4 sections ──
-  return `
-  <div class="page-header">
-    <div><div class="page-title">New work request</div><div class="page-sub">Complete all sections — fields marked * are required</div></div>
   </div>
-  ${section1}
-  ${section2}
+
   <div class="form-actions">
     <button class="btn btn-secondary" onclick="goView(role==='user'?'My Requests':role==='tech'?'My Jobs':'All Requests')">Cancel</button>
-    <button class="btn btn-primary" onclick="submitRequest()"><i class="ti ti-send"></i>Submit request</button>
-  </div>
-`;
+    <button class="btn btn-primary" onclick="submitRequest()">
+      <i class="ti ti-send"></i> Submit request
+    </button>
+  </div>`;
 }
+
 
 function saveDraft() {
   showToast('Draft saved — you can continue later.', 'success');
